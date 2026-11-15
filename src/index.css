@@ -820,3 +820,10 @@ body { background: #F7F8FC; }
 }
 .brand-lockup { padding: 92px 0 98px; }
 @container device (max-width: 760px) { .brand-lockup { padding: 58px 0 64px; } }
+/* Orb a touch smaller around the lockup */
+.hero-orb.behind .orb { --s: 220px !important; }
+.brand-lockup { padding: 72px 0 78px; }
+@container device (max-width: 760px) {
+  .hero-orb.behind .orb { --s: 142px !important; }
+  .brand-lockup { padding: 44px 0 50px; }
+}
