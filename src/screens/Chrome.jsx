@@ -40,7 +40,7 @@ export function ConceptNote({ ctx, restart }) {
         All prices, seats, reviews and people are sample data. Nothing is booked and no payment is taken.
       </p>
       <p>
-        Logo: MakeMyTrip, from Wikimedia Commons. Photos: Wikimedia Commons contributors, used under their licences; stays and prices are made up.{' '}
+        Logo: MakeMyTrip, from Wikimedia Commons. Icons: Phosphor Icons (MIT). Photos: Wikimedia Commons contributors, used under their licences; stays and prices are made up.{' '}
         <button onClick={() => setCredits((c) => !c)}>{credits ? 'Hide photo credits' : 'Photo credits'}</button>
       </p>
       {credits && (

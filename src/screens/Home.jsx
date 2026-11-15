@@ -1,4 +1,5 @@
 import { Icon, MyraOrb, Scene } from '../art.jsx'
+import { Suitcase, SealPercent, Compass } from '@phosphor-icons/react'
 
 const TABS = [
   ['flight', 'Flights'], ['hotel', 'Hotels'], ['villa', 'Villas & Homestays'], ['holiday', 'Holiday Packages'],
@@ -68,10 +69,10 @@ export function Home({ ctx }) {
         </div>
         <nav className="bottom-nav">
           <span className="on"><i className="my">my</i>Home</span>
-          <span>🧳<br />My Trips</span>
+          <span><Suitcase size={22} weight="duotone" />My Trips</span>
           <button onClick={start} className="nav-orb" aria-label="Plan with Myra"><MyraOrb size={50} /></button>
-          <span>％<br />Offers</span>
-          <span>🧭<br />Where2Go</span>
+          <span><SealPercent size={22} weight="duotone" />Offers</span>
+          <span><Compass size={22} weight="duotone" />Where2Go</span>
         </nav>
       </div>
     </>
