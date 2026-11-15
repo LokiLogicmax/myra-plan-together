@@ -144,7 +144,7 @@ function Palm({ x, y, s = 1 }) {
 const ICONS = ['flight', 'hotel', 'villa', 'holiday', 'train', 'bus', 'cab', 'tours', 'visa', 'forex', 'insurance']
 export function Icon({ name, size = 40 }) {
   const n = ICONS.includes(name) ? name : 'tours'
-  return <img className="mmt-ico" src={'/brand/icons/' + n + '.png'} width={size} height={size} alt="" aria-hidden="true" draggable="false" />
+  return <img className="mmt-ico" src={'brand/icons/' + n + '.png'} width={size} height={size} alt="" aria-hidden="true" draggable="false" />
 }
 
 // Myra's orb: a pearly, iridescent bubble that breathes and slowly changes shape.
@@ -174,7 +174,7 @@ export function MyraMark({ size = 22 }) {
 export function Logo() {
   return (
     <span className="mmt-logo">
-      <img src="/brand/mmt-logo.svg" alt="makemytrip" width="94" height="30" />
+      <img src="brand/mmt-logo.svg" alt="makemytrip" width="94" height="30" />
     </span>
   )
 }

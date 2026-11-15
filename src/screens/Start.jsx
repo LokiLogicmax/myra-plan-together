@@ -59,7 +59,7 @@ export function Start({ ctx }) {
       <div className="start-head">
         <div className="brand-lockup">
           <div className="hero-orb behind" aria-hidden="true"><MyraOrb size={260} /></div>
-          <h1 className="start-logo"><img src="/brand/mmt-logo.svg" alt="MakeMyTrip" /></h1>
+          <h1 className="start-logo"><img src="brand/mmt-logo.svg" alt="MakeMyTrip" /></h1>
           <p className="with">with <MyraMark size={40} /></p>
         </div>
         <p className="start-q">What kind of trip are you in the mood for?</p>
