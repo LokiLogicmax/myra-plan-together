@@ -945,3 +945,26 @@ button.tfield:focus-visible { outline: 2px solid var(--blue); outline-offset: -2
   .cg-list { grid-template-columns: 1fr; }
   .cg-months li { width: 21px; height: 22px; }
 }
+
+/* City guide hero + compact city cards (no photos) */
+.cg-hero { position: relative; height: 230px; }
+.cg-hero .scene { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cg-tag { position: absolute; left: 16px; bottom: 14px; background: rgba(255,255,255,.92); color: #1A1C2E; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+.city-grid { gap: 12px; }
+.city-card { padding: 12px 14px; display: grid; gap: 6px; align-content: start; }
+.city-card .cc-top { justify-content: flex-start; gap: 8px; }
+.city-card .cc-top b { font-size: 16px; }
+.city-card .cc-top .tag, .city-card .cc-top .pick { margin-left: auto; }
+.city-card .pick.inline { font-size: 10.5px; padding: 2px 8px; }
+.city-card .radio-dot { position: static; width: 18px; height: 18px; flex: none; border: 2px solid #C9D2E0; box-shadow: none; background: #fff; }
+.city-card.on .radio-dot { border: 5px solid var(--blue); }
+.city-card ul { list-style: none; padding: 0; margin: 2px 0 0; display: grid; gap: 4px; color: var(--body); font-size: 12.5px; }
+.city-card li { display: flex; gap: 7px; }
+.city-card li i { color: var(--blue); font-style: normal; width: 13px; flex: none; }
+.city-card .cc-price { flex-direction: row; justify-content: space-between; align-items: baseline; padding-top: 6px; margin-top: 2px; }
+.city-card .cc-price small { font-size: 11.5px; }
+.city-card .cc-price b { font-size: 14px; }
+@container device (max-width: 760px) {
+  .cg-hero { height: 170px; }
+  .city-card { display: grid; grid-template-columns: none; }
+}

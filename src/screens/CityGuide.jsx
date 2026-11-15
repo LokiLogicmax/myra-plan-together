@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Airplane, Train, Car, CalendarCheck, Clock, Thermometer, Translate, Lightbulb, MapPin, Bed } from '@phosphor-icons/react'
 import { CITY_GUIDE, MONTHS } from '../cityGuide.js'
+import { Scene } from '../art.jsx'
 
 const TABS = [['overview', 'Overview'], ['reach', 'How to reach'], ['todo', 'Things to do'], ['stay', 'Where to stay']]
 const FACT_ICON = [<CalendarCheck size={18} />, <Clock size={18} />, <Thermometer size={18} />, <Translate size={18} />]
@@ -13,6 +14,7 @@ export function CityGuide({ city }) {
   if (!g) return null
   return (
     <section className="cg" aria-label={'About ' + city.name}>
+      <div className="cg-hero"><Scene kind={city.art} label={city.name} /><span className="cg-tag">{city.tag}</span></div>
       <header className="cg-head">
         <div>
           <h2>{city.name}</h2>

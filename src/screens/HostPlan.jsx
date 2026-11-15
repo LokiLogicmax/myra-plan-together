@@ -88,16 +88,12 @@ function CityStage(ctx, toStage) {
       <div className="city-grid">
         {CITIES.map((c) => (
           <button key={c.id} className={'city-card' + (s.city === c.id ? ' on' : '')} onClick={() => set({ city: c.id })} aria-pressed={s.city === c.id}>
-            <div className="img"><Scene kind={c.art} label={c.name} />{c.pick && <span className="pick">★ Myra’s pick</span>}<span className="radio-dot" /></div>
-            <div className="cc-body">
-              <div className="cc-top"><b>{c.name}</b><span className="tag">{c.tag}</span></div>
-              <ul>
-                <li><i>☀</i>{c.weather}</li>
-                <li><i>⇄</i>{c.reach}</li>
-                <li><i>✦</i>{c.todo.join(' · ')}</li>
-              </ul>
-              <div className="cc-price"><small>Trip estimate per person</small><b>{c.est}</b></div>
-            </div>
+            <div className="cc-top"><span className="radio-dot" /><b>{c.name}</b>{c.pick ? <span className="pick inline">★ Myra’s pick</span> : <span className="tag">{c.tag}</span>}</div>
+            <ul>
+              <li><i>☀</i>{c.weather}</li>
+              <li><i>⇄</i>{c.reach}</li>
+            </ul>
+            <div className="cc-price"><small>Per person</small><b>{c.est}</b></div>
           </button>
         ))}
       </div>
