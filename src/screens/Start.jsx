@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { UsersThree, MapPin, CalendarBlank, CaretDown, Check } from '@phosphor-icons/react'
-import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY } from '../data.js'
+import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY, CODES } from '../data.js'
 import { Scene, MyraMark, MyraOrb } from '../art.jsx'
 import { VoiceInput } from './Chrome.jsx'
 
@@ -123,7 +123,6 @@ export function Start({ ctx }) {
 const TILT = [-4, 3, -2, 2.5, -3, 4]
 const LIFT = [4, 0, 3, 1, 2, 5]
 
-const CODES = { Bengaluru: 'BLR airport · SBC station', Mumbai: 'BOM airport · CSMT station', Delhi: 'DEL airport · NDLS station', Hyderabad: 'HYD airport · SC station' }
 const WHEN_BIG = {
   w1: { big: '20–22', unit: 'Nov’26', day: 'Fri – Sun · This weekend' },
   w2: { big: '27–29', unit: 'Nov’26', day: 'Fri – Sun · Next weekend' },

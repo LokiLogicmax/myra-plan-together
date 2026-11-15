@@ -867,3 +867,29 @@ body { background: #F7F8FC; }
   .fan-label b { font-size: 12px; }
   .basics-bar { margin-top: -22px; }
 }
+
+/* Trip so far: field cells like the start screen's details bar */
+.decided { padding: 0; display: block; background: rgba(255, 255, 255, .92); border-radius: 16px; box-shadow: 0 12px 30px -18px rgba(16, 24, 40, .25); overflow: hidden; }
+.decided .chip-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0; }
+.tfield { all: unset; box-sizing: border-box; display: grid; align-content: start; gap: 3px; padding: 12px 16px 13px; min-width: 0; background: none; border-radius: 0; animation: pop .25s ease-out; cursor: default; }
+.tfield + .tfield { border-left: 1px solid #ECEEF3; }
+button.tfield { cursor: pointer; transition: background .15s; }
+button.tfield:hover { background: #F4F8FE; }
+button.tfield:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.tf-label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #6B7280; }
+.tf-label svg:first-child { color: #9AA3B2; flex: none; }
+.tf-caret { color: var(--blue); }
+.tf-val { font-size: 17px; font-weight: 900; color: #111; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tf-sub { font-size: 11.5px; color: #8A92A0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tfield.locked .tf-val { color: #3A3F4A; }
+/* inside the phone capsule (dark) */
+.cap-chips .tfield { background: rgba(255, 255, 255, .1); border-radius: 12px; border: 0; padding: 8px 12px; }
+.cap-chips .tf-label, .cap-chips .tf-sub { color: #B9C4D6; }
+.cap-chips .tf-val { color: #fff; font-size: 15px; }
+.cap-chips .tf-caret { color: #8CCBFF; }
+.decided .chip-row { grid-auto-flow: row; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+.tfield + .tfield { border-left: 0; }
+.decided .tfield { box-shadow: -1px 0 0 #ECEEF3, 0 -1px 0 #ECEEF3; }
+@container device (max-width: 760px) { .decided { display: none; } }
+.cap-chips .tfield.locked { background: rgba(255,255,255,.06); }
+.cap-chips .tfield.locked .tf-val { color: #fff; }

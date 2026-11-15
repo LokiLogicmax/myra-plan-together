@@ -33,6 +33,9 @@ export const PARTY = {
   '9+': { mode: 'group', label: '9+ people', big: '9+', unit: 'people', sub: 'Big group · friends vote' },
 }
 export const FROM = ['Bengaluru', 'Mumbai', 'Delhi', 'Hyderabad']
+// Airport and station codes for each starting city.
+export const CODES = { Bengaluru: 'BLR airport · SBC station', Mumbai: 'BOM airport · CSMT station', Delhi: 'DEL airport · NDLS station', Hyderabad: 'HYD airport · SC station' }
+
 export const WHEN = [
   { id: 'w1', label: 'This weekend', sub: 'Fri 20 – Sun 22 Nov' },
   { id: 'w2', label: 'Next weekend', sub: 'Fri 27 – Sun 29 Nov' },

@@ -1,33 +1,44 @@
-import { CITIES, EXPERIENCES, WHEN, PARTY, STAY_WHY, inr, stayPerPerson, stayType } from '../data.js'
+import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, STAY_WHY, inr, stayPerPerson, stayType } from '../data.js'
+import { Compass, MapPin, CalendarBlank, UsersThree, MapTrifold, Train, Bed, CaretDown, Lock } from '@phosphor-icons/react'
 import { Scene, ModeIcon } from '../art.jsx'
 import { Planner } from './Chrome.jsx'
 
 export const liveTime = () => new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })
 
+const ICON = {
+  Trip: <Compass size={15} />, From: <MapPin size={15} />, When: <CalendarBlank size={15} />, Who: <UsersThree size={15} />,
+  City: <MapTrifold size={15} />, Transport: <Train size={15} />, Stay: <Bed size={15} />,
+}
+
+// The trip so far, laid out like the trip basics bar on the start screen.
 export function TripChips({ ctx, locked = false, onEdit }) {
   const { s, city } = ctx
   const b = s.basics
   const exp = EXPERIENCES.find((e) => e.id === b.exp)
   const when = WHEN.find((w) => w.id === b.when)
-  const peopleLabel = s.dropout === 'accepted' ? '5 people' : PARTY[b.people]?.label
+  const party = PARTY[b.people]
   const items = [
-    ['Trip', exp?.label, 'start', true],
-    ['From', b.from, 'start'],
-    ['When', when?.sub, 'start'],
-    ['Who', peopleLabel, 'start'],
-    ['City', city?.name, 'city', true],
+    ['Trip', exp?.label, exp?.sub, 'start', true],
+    ['From', b.from, CODES[b.from], 'start'],
+    ['When', when?.sub.replace(/^(\w+) (\d+) – (\w+) (\d+) (\w+)$/, '$2–$4 $5'), when ? '2 nights' : '', 'start'],
+    ['Who', s.dropout === 'accepted' ? '5 people' : party?.label, party?.sub, 'start'],
+    ['City', city?.name, city?.tag, 'city', true],
   ]
-  if (!locked && s.shortTransport.length) items.push(['Transport', `${s.shortTransport.length} shortlisted`, 'transport'])
-  if (!locked && s.shortStay.length) items.push(['Stay', `${s.shortStay.length} shortlisted`, 'stay'])
-  return items.filter(([, v]) => v).map(([k, v, target, fixed]) => {
+  if (!locked && s.shortTransport.length) items.push(['Transport', ctx.group ? `${s.shortTransport.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'transport'])
+  if (!locked && s.shortStay.length) items.push(['Stay', ctx.group ? `${s.shortStay.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'stay'])
+  return items.filter(([, v]) => v).map(([k, v, sub, target, fixed]) => {
     const isLocked = locked && fixed
-    return (
-      <span key={k} className={'tchip' + (isLocked ? ' locked' : '')}>
-        <small>{k}</small>
-        <b>{isLocked && <span aria-label="Fixed by the host">🔒 </span>}{v}</b>
-        {onEdit && !locked && <button onClick={() => onEdit(target)} aria-label={'Change ' + k}>✎</button>}
-      </span>
+    const editable = onEdit && !locked
+    const inner = (
+      <>
+        <span className="tf-label">{ICON[k]}{k}{isLocked ? <Lock size={12} weight="bold" aria-label="Fixed by the host" /> : editable ? <CaretDown className="tf-caret" size={11} weight="bold" /> : null}</span>
+        <b className="tf-val">{v}</b>
+        {sub && <span className="tf-sub">{sub}</span>}
+      </>
     )
+    return editable
+      ? <button key={k} className="tchip tfield" onClick={() => onEdit(target)} aria-label={'Change ' + k}>{inner}</button>
+      : <span key={k} className={'tchip tfield' + (isLocked ? ' locked' : '')}>{inner}</span>
   })
 }
 

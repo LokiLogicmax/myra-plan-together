@@ -99,7 +99,6 @@ export function Planner({ ctx, steps, current, chips, capsule, title, sub, back,
 
       <div className="pl-main">
         <section className="decided" aria-label="What's decided">
-          <span className="decided-label">Your trip</span>
           <div className="chip-row">{chips}</div>
         </section>
         {banner}
