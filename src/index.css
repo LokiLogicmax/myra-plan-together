@@ -470,11 +470,11 @@ body { background: #F7F8FC; }
 .device-scroll {
   min-height: 100vh;
   background:
-    radial-gradient(55% 40% at 6% 0%, rgba(235, 32, 38, .11), transparent 62%),
-    radial-gradient(55% 45% at 96% 4%, rgba(0, 140, 255, .16), transparent 62%),
-    radial-gradient(45% 40% at 80% 78%, rgba(235, 32, 38, .07), transparent 70%),
-    radial-gradient(60% 50% at 18% 92%, rgba(83, 178, 254, .14), transparent 68%),
-    #F7F8FC;
+    radial-gradient(55% 40% at 6% 0%, rgba(235, 32, 38, .15), transparent 62%),
+    radial-gradient(55% 45% at 96% 4%, rgba(0, 140, 255, .2), transparent 62%),
+    radial-gradient(45% 40% at 80% 78%, rgba(235, 32, 38, .1), transparent 70%),
+    radial-gradient(60% 50% at 18% 92%, rgba(83, 178, 254, .18), transparent 68%),
+    #E9ECF4;
   background-attachment: fixed;
 }
 .framed .device-scroll { background-attachment: local; }
