@@ -72,11 +72,11 @@ export function Start({ ctx }) {
             role="radio"
             aria-checked={b.exp === e.id}
             className={'fan-card' + (b.exp === e.id ? ' on' : '')}
-            style={{ '--r': `${(i - 2.5) * 3.5}deg`, '--y': `${Math.abs(i - 2.5) * 7}px` }}
+            style={{ '--r': TILT[i % TILT.length] + 'deg', '--y': LIFT[i % LIFT.length] + 'px' }}
             onClick={() => setB({ exp: e.id })}
           >
             <Scene kind={e.art} label={e.label} />
-            <span className="fan-label"><b>{e.label}</b><small>{e.sub}</small></span>
+            <span className="fan-label"><b>{e.label}</b></span>
             {b.exp === e.id && <span className="tick">✓</span>}
           </button>
         ))}
@@ -118,6 +118,10 @@ export function Start({ ctx }) {
     </div>
   )
 }
+
+// Loose, hand-placed tilt like photos laid on a table.
+const TILT = [-4, 3, -2, 2.5, -3, 4]
+const LIFT = [4, 0, 3, 1, 2, 5]
 
 const CODES = { Bengaluru: 'BLR airport · SBC station', Mumbai: 'BOM airport · CSMT station', Delhi: 'DEL airport · NDLS station', Hyderabad: 'HYD airport · SC station' }
 const WHEN_BIG = {

@@ -851,3 +851,19 @@ body { background: #F7F8FC; }
   .basics-bar { margin-top: -24px; }
   .fan-label, .fan-card.on .fan-label { padding-bottom: 32px; }
 }
+
+/* Trip cards: square photos laid loosely, tucked under the details bar */
+.fan { padding-top: 14px; }
+.fan-card { width: 138px; height: 132px; margin: 0 -2px; border-radius: 16px; border-width: 4px; }
+.fan-card:hover { transform: rotate(0) translateY(-8px); }
+.fan-card.on { transform: rotate(0) translateY(-12px) scale(1.04); }
+.fan-label, .fan-card:hover .fan-label, .fan-card.on .fan-label { padding: 22px 10px 32px; background: linear-gradient(transparent, rgba(0, 0, 0, .6)); }
+.fan-label b { font-size: 13.5px; line-height: 1.15; }
+.basics-bar { margin-top: -26px; }
+@media (max-width: 1000px) { .fan-card { width: 118px; height: 112px; } }
+@container device (max-width: 760px) {
+  .fan-card { width: 104px; height: 100px; margin: 0 -2px; }
+  .fan-label, .fan-card.on .fan-label { padding: 18px 8px 28px; }
+  .fan-label b { font-size: 12px; }
+  .basics-bar { margin-top: -22px; }
+}
