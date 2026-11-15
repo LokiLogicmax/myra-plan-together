@@ -764,3 +764,5 @@ body { background: #F7F8FC; }
 .start-head h1.start-logo { background: none; line-height: 0; display: flex; justify-content: center; }
 .start-logo img { height: 84px; width: auto; display: block; }
 @container device (max-width: 760px) { .start-logo img { height: 56px; } }
+.hero-orb.after { margin: 26px 0 18px; }
+@container device (max-width: 760px) { .hero-orb.after { margin: 18px 0 10px; } }
