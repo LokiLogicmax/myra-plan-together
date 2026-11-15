@@ -23,7 +23,7 @@ export function Home({ ctx }) {
             </button>
             {TABS.map(([ic, label], i) => (
               <button key={label} className={'tab' + (i === 0 ? ' on' : '')}>
-                <Icon name={ic} size={38} />
+                <Icon name={ic} size={50} />
                 <span>{label}</span>
               </button>
             ))}
@@ -58,13 +58,13 @@ export function Home({ ctx }) {
       <div className="home-app">
         <div className="app-tiles">
           {[['flight', 'Flights'], ['hotel', 'Hotels'], ['train', 'Trains'], ['holiday', 'Holiday Packages']].map(([ic, l]) => (
-            <button key={l} className="tile"><Icon name={ic} size={46} /><b>{l}</b></button>
+            <button key={l} className="tile"><Icon name={ic} size={52} /><b>{l}</b></button>
           ))}
         </div>
         <MyraBanner onClick={start} compact />
         <div className="app-grid card">
           {[['cab', 'Airport Cabs'], ['villa', 'Villas & Homestays'], ['bus', 'Bus'], ['cab', 'Outstation Cabs'], ['tours', 'Tours & Attractions'], ['hotel', 'Hourly Stays'], ['forex', 'Forex Card & Currency'], ['visa', 'Visa'], ['insurance', 'Travel Insurance']].map(([ic, l]) => (
-            <span key={l}><Icon name={ic} size={36} />{l}</span>
+            <span key={l}><Icon name={ic} size={44} />{l}</span>
           ))}
         </div>
         <nav className="bottom-nav">

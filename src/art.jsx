@@ -1,7 +1,6 @@
 // Illustrated stand-ins for photos. Each scene is a small SVG, so the prototype has no image files.
 import { useId, useState } from 'react'
 import { PHOTOS } from './photos.js'
-import { AirplaneTilt, Buildings, HouseLine, Umbrella, Train, Bus, Car, Binoculars, Stamp, CurrencyInr, ShieldCheck, MapTrifold } from '@phosphor-icons/react'
 
 const PALETTES = {
   beach: ['#FFB36B', '#FFD9A0', '#2BA6C9', '#F3DDB0'],
@@ -141,15 +140,11 @@ function Palm({ x, y, s = 1 }) {
   )
 }
 
-// Product icons from the Phosphor design system (duotone), in MakeMyTrip blue.
-const ICONS = {
-  flight: AirplaneTilt, hotel: Buildings, villa: HouseLine, holiday: Umbrella,
-  train: Train, bus: Bus, cab: Car, tours: Binoculars, visa: Stamp,
-  forex: CurrencyInr, insurance: ShieldCheck,
-}
+// Product icons: masked from a screenshot of MakeMyTrip's own icon row (public/brand/icons).
+const ICONS = ['flight', 'hotel', 'villa', 'holiday', 'train', 'bus', 'cab', 'tours', 'visa', 'forex', 'insurance']
 export function Icon({ name, size = 40 }) {
-  const C = ICONS[name] || MapTrifold
-  return <C className="ph-ico" size={size} weight="duotone" color="#008CFF" aria-hidden="true" />
+  const n = ICONS.includes(name) ? name : 'tours'
+  return <img className="mmt-ico" src={'/brand/icons/' + n + '.png'} width={size} height={size} alt="" aria-hidden="true" draggable="false" />
 }
 
 // Myra's orb: a pearly, iridescent bubble that breathes and slowly changes shape.
