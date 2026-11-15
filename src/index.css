@@ -717,30 +717,39 @@ body { background: #F7F8FC; }
 
 .home-desk > .strip, .home-desk > .myra-banner { position: relative; z-index: 1; }
 
-/* v0.2: Myra colour identity: red, white, blue.
-   The gradient passes through white, so red and blue never mix into a muddy purple.
+/* v0.2: Myra colour identity: deep MakeMyTrip red flowing into deep blue.
+   Mixed in oklab so the middle stays a rich wine, not a muddy purple.
    MakeMyTrip's own SEARCH button keeps its blue. */
 :root {
-  --myra-red: #EB2026; --myra-blue: #008CFF; --myra-ink: #0B2447;
-  --myra-cta: linear-gradient(100deg, #FF8C90 0%, #FFD3D5 30%, #FFFFFF 50%, #CDE6FF 70%, #7CC0FF 100%);
-  --myra-tint: linear-gradient(120deg, #FFECEE 0%, #FFFFFF 48%, #E6F3FF 100%);
-  --myra-deep: linear-gradient(110deg, #FFB3B6 0%, #FFE4E5 28%, #FFFFFF 50%, #DCEEFF 72%, #9FD0FF 100%);
+  --myra-red: #EB2026; --myra-blue: #008CFF;
+  --myra-cta: linear-gradient(in oklab 100deg, #B5121B 0%, #7A1838 42%, #1A3A8F 78%, #0C4FB8 100%);
+  --myra-dark: linear-gradient(in oklab 135deg, #5A0A14 0%, #3A1238 40%, #0E2560 78%, #0A3A8C 100%);
+  --myra-glow: -10px 10px 24px -12px rgba(181, 18, 27, .6), 10px 10px 24px -12px rgba(12, 79, 184, .65);
 }
-.cta { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -10px 8px 22px -12px rgba(235, 32, 38, .55), 10px 8px 22px -12px rgba(0, 140, 255, .6), inset 0 0 0 1px rgba(255, 255, 255, .7); }
-.cta:hover:not(:disabled) { filter: saturate(1.25); }
-.cta:disabled { background: #E3E3E3; color: #9A9A9A; box-shadow: none; }
-.cta.ghost { background: #fff; color: var(--myra-ink); box-shadow: inset 0 0 0 1.5px transparent; border: 1.5px solid transparent; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(100deg, var(--myra-red), #fff 50%, var(--myra-blue)) border-box; }
+.cta { background: var(--myra-cta); color: #fff; box-shadow: var(--myra-glow), inset 0 1px 0 rgba(255, 255, 255, .18); }
+.cta:hover:not(:disabled) { filter: brightness(1.12); }
+.cta:disabled { background: #D9D9D9; color: #fff; box-shadow: none; }
+.cta.ghost { color: #7A1838; border: 1.5px solid transparent; box-shadow: none; background: linear-gradient(#fff, #fff) padding-box, var(--myra-cta) border-box; }
 .search-wrap .cta { background: var(--cta); color: #fff; box-shadow: 0 10px 22px -10px rgba(6, 90, 243, .7); }
+.vbtn { background: var(--myra-cta); box-shadow: var(--myra-glow); }
 
-.myra-card { background: var(--myra-tint) padding-box, linear-gradient(120deg, rgba(235, 32, 38, .45), rgba(255, 255, 255, .9) 50%, rgba(0, 140, 255, .55)) border-box; }
-.myra-tab { background: var(--myra-tint); color: var(--myra-ink); }
-.myra-tab:hover { background: var(--myra-deep); }
-.pick { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -4px 4px 12px -6px rgba(235, 32, 38, .6), 4px 4px 12px -6px rgba(0, 140, 255, .6); }
+/* Myra's card: dark, with light text */
+.myra-card { background: var(--myra-dark) padding-box, linear-gradient(135deg, rgba(255, 120, 130, .45), rgba(120, 180, 255, .45)) border-box; color: #fff; box-shadow: 0 22px 48px -22px rgba(40, 20, 80, .7); }
+.myra-card .myra-msg { color: rgba(255, 255, 255, .94); }
+.myra-card .myra-mark { background: linear-gradient(100deg, #FFC2C6, #FFFFFF 50%, #BFE0FF); -webkit-background-clip: text; background-clip: text; }
+.myra-card .myra-mark .sparkle { fill: #CFE6FF; }
+.myra-card .bubble.myra { background: rgba(255, 255, 255, .1); color: #fff; }
+.myra-card .bubble.me { background: rgba(255, 255, 255, .92); color: #0E2560; }
+.myra-card .quick button { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .22); color: #fff; }
+.myra-card .quick button:hover { background: rgba(255, 255, 255, .16); }
+.myra-card .orb { box-shadow: 0 0 calc(var(--s) * .5) rgba(255, 255, 255, .25); }
+.drawer .myra-card { padding: 14px; border-radius: 18px; }
 
-.myra-banner { background: #fff; color: var(--myra-ink); }
-.mb-text { background: var(--myra-deep); }
-.mb-kicker { color: var(--myra-red); opacity: 1; }
-.mb-sub { opacity: .8; }
-.mb-cta { background: var(--myra-ink); color: #fff; }
-.vbtn { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -6px 6px 16px -8px rgba(235, 32, 38, .6), 6px 6px 16px -8px rgba(0, 140, 255, .7), inset 0 0 0 1px rgba(255, 255, 255, .8); }
-.vbtn.voice.on { color: #fff; }
+.myra-tab { background: var(--myra-dark); color: #fff; }
+.myra-tab:hover { filter: brightness(1.15); background: var(--myra-dark); }
+.pick { background: var(--myra-cta); color: #fff; box-shadow: var(--myra-glow); }
+
+.myra-banner { background: var(--myra-dark); color: #fff; }
+.mb-kicker { color: #FFB3B8; opacity: 1; }
+.mb-cta { background: #fff; color: #7A1838; }
+.mb-text { background: var(--myra-dark); }
