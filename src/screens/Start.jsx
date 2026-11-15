@@ -80,14 +80,6 @@ export function Start({ ctx }) {
         ))}
       </div>
 
-      <VoiceInput
-        className="tell"
-        placeholder="Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”"
-        sample="we are six friends… beaches, from Bangalore, next weekend"
-        onSubmit={parse}
-      />
-      {heard && <p className="heard">{heard}</p>}
-
       <div className="basics-bar card" role="group" aria-label="Trip basics">
         <Field
           icon={<UsersThree size={16} />} label="Who’s coming" open={open === 'people'} onToggle={() => toggle('people')}
@@ -108,6 +100,14 @@ export function Start({ ctx }) {
           value={b.when} onPick={(v) => pick({ when: v })}
         />
       </div>
+
+      <VoiceInput
+        className="tell"
+        placeholder="Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”"
+        sample="we are six friends… beaches, from Bangalore, next weekend"
+        onSubmit={parse}
+      />
+      {heard && <p className="heard">{heard}</p>}
 
       <div className="start-cta">
         <button className="cta big" disabled={!b.exp} onClick={begin}>Plan with Myra</button>
