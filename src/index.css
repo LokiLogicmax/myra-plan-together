@@ -717,29 +717,37 @@ body { background: #F7F8FC; }
 
 .home-desk > .strip, .home-desk > .myra-banner { position: relative; z-index: 1; }
 
-/* v0.2: Myra colour identity: deep MakeMyTrip red flowing into deep blue.
-   Mixed in oklab so the middle stays a rich wine, not a muddy purple.
+/* v0.2: Myra colour identity: electric blue and ember red, meeting in near-black.
+   Like light glowing out of the dark: blurred blue from above, warm red-orange from below.
    MakeMyTrip's own SEARCH button keeps its blue. */
 :root {
   --myra-red: #EB2026; --myra-blue: #008CFF;
-  --myra-cta: linear-gradient(in oklab 100deg, #B5121B 0%, #7A1838 42%, #1A3A8F 78%, #0C4FB8 100%);
-  --myra-dark: linear-gradient(in oklab 135deg, #5A0A14 0%, #3A1238 40%, #0E2560 78%, #0A3A8C 100%);
-  --myra-glow: -10px 10px 24px -12px rgba(181, 18, 27, .6), 10px 10px 24px -12px rgba(12, 79, 184, .65);
+  --myra-cta:
+    radial-gradient(60% 140% at 0% 50%, rgba(255, 92, 40, .95), rgba(214, 38, 22, .55) 45%, transparent 75%),
+    radial-gradient(60% 140% at 100% 50%, rgba(20, 120, 255, .95), rgba(10, 60, 220, .55) 45%, transparent 75%),
+    #07080E;
+  --myra-dark:
+    radial-gradient(75% 55% at 18% -5%, rgba(0, 150, 255, .95), rgba(0, 90, 230, .5) 45%, transparent 75%),
+    radial-gradient(65% 50% at 90% 0%, rgba(20, 70, 255, .9), transparent 70%),
+    radial-gradient(80% 55% at 25% 108%, rgba(255, 96, 30, .95), rgba(220, 45, 20, .55) 45%, transparent 75%),
+    radial-gradient(60% 45% at 92% 104%, rgba(255, 140, 100, .7), rgba(190, 30, 15, .4) 50%, transparent 75%),
+    #05060B;
+  --myra-glow: -10px 10px 24px -12px rgba(255, 80, 30, .65), 10px 10px 24px -12px rgba(20, 110, 255, .7);
 }
 .cta { background: var(--myra-cta); color: #fff; box-shadow: var(--myra-glow), inset 0 1px 0 rgba(255, 255, 255, .18); }
 .cta:hover:not(:disabled) { filter: brightness(1.12); }
 .cta:disabled { background: #D9D9D9; color: #fff; box-shadow: none; }
-.cta.ghost { color: #7A1838; border: 1.5px solid transparent; box-shadow: none; background: linear-gradient(#fff, #fff) padding-box, var(--myra-cta) border-box; }
+.cta.ghost { color: #0B0C14; border: 1.5px solid transparent; box-shadow: none; background: linear-gradient(#fff, #fff) padding-box, var(--myra-cta) border-box; }
 .search-wrap .cta { background: var(--cta); color: #fff; box-shadow: 0 10px 22px -10px rgba(6, 90, 243, .7); }
 .vbtn { background: var(--myra-cta); box-shadow: var(--myra-glow); }
 
 /* Myra's card: dark, with light text */
-.myra-card { background: var(--myra-dark) padding-box, linear-gradient(135deg, rgba(255, 120, 130, .45), rgba(120, 180, 255, .45)) border-box; color: #fff; box-shadow: 0 22px 48px -22px rgba(40, 20, 80, .7); }
+.myra-card { background: var(--myra-dark); border: 1px solid rgba(255, 255, 255, .12); color: #fff; box-shadow: 0 22px 48px -22px rgba(10, 20, 60, .75); }
 .myra-card .myra-msg { color: rgba(255, 255, 255, .94); }
 .myra-card .myra-mark { background: linear-gradient(100deg, #FFC2C6, #FFFFFF 50%, #BFE0FF); -webkit-background-clip: text; background-clip: text; }
 .myra-card .myra-mark .sparkle { fill: #CFE6FF; }
 .myra-card .bubble.myra { background: rgba(255, 255, 255, .1); color: #fff; }
-.myra-card .bubble.me { background: rgba(255, 255, 255, .92); color: #0E2560; }
+.myra-card .bubble.me { background: rgba(255, 255, 255, .92); color: #0B0C14; }
 .myra-card .quick button { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .22); color: #fff; }
 .myra-card .quick button:hover { background: rgba(255, 255, 255, .16); }
 .myra-card .orb { box-shadow: 0 0 calc(var(--s) * .5) rgba(255, 255, 255, .25); }
@@ -750,6 +758,6 @@ body { background: #F7F8FC; }
 .pick { background: var(--myra-cta); color: #fff; box-shadow: var(--myra-glow); }
 
 .myra-banner { background: var(--myra-dark); color: #fff; }
-.mb-kicker { color: #FFB3B8; opacity: 1; }
-.mb-cta { background: #fff; color: #7A1838; }
+.mb-kicker { color: #8CCBFF; opacity: 1; }
+.mb-cta { background: #fff; color: #0B0C14; }
 .mb-text { background: var(--myra-dark); }
