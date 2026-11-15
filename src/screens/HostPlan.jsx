@@ -11,7 +11,10 @@ const ICON = {
 }
 
 // The trip so far, laid out like the trip basics bar on the start screen.
-export function TripChips({ ctx, locked = false, onEdit }) {
+// In the planner, a step shows here only once you've moved past it.
+const PAST = { city: 1, transport: 2, stay: 3, share: 4 }
+export function TripChips({ ctx, locked = false, onEdit, stage }) {
+  const past = (step) => !stage || PAST[stage] > PAST[step]
   const { s, city } = ctx
   const b = s.basics
   const exp = EXPERIENCES.find((e) => e.id === b.exp)
@@ -24,8 +27,8 @@ export function TripChips({ ctx, locked = false, onEdit }) {
     ['Who', s.dropout === 'accepted' ? '5 people' : party?.label, party?.sub, 'start'],
     ['City', city?.name, city?.tag, 'city', true],
   ]
-  if (!locked && s.shortTransport.length) items.push(['Transport', ctx.group ? `${s.shortTransport.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'transport'])
-  if (!locked && s.shortStay.length) items.push(['Stay', ctx.group ? `${s.shortStay.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'stay'])
+  if (!locked && past('transport') && s.shortTransport.length) items.push(['Transport', ctx.group ? `${s.shortTransport.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'transport'])
+  if (!locked && past('stay') && s.shortStay.length) items.push(['Stay', ctx.group ? `${s.shortStay.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'stay'])
   return items.filter(([, v]) => v).map(([k, v, sub, target, fixed]) => {
     const isLocked = locked && fixed
     const editable = onEdit && !locked
@@ -50,7 +53,7 @@ export function HostPlan({ ctx }) {
     window.scrollTo({ top: 0 })
   }
   const onEdit = (target) => (target === 'start' ? go('start') : toStage(target))
-  const chips = <TripChips ctx={ctx} onEdit={onEdit} />
+  const chips = <TripChips ctx={ctx} onEdit={onEdit} stage={s.stage} />
   const capsule = s.loading
     ? { city: 'Checking seasons and travel times…', transport: `Checking live seats for ${people}…`, stay: 'Checking stays free on 27–29 Nov…' }[s.loading]
     : [city?.name, PARTY[s.basics.people]?.label, '27–29 Nov'].filter(Boolean).join(' · ')
