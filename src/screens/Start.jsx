@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { UsersThree, MapPin, CalendarBlank, CaretDown, Check } from '@phosphor-icons/react'
 import { EXPERIENCES, PEOPLE, FROM, WHEN } from '../data.js'
 import { Scene, MyraMark, MyraOrb } from '../art.jsx'
 import { VoiceInput } from './Chrome.jsx'
@@ -8,6 +9,18 @@ export function Start({ ctx }) {
   const b = s.basics
   const setB = (patch) => set({ basics: { ...b, ...patch } })
   const [heard, setHeard] = useState(null)
+  const [open, setOpen] = useState(null)
+  const toggle = (k) => setOpen((o) => (o === k ? null : k))
+  const pick = (patch) => { setB(patch); setOpen(null) }
+  const w = WHEN_BIG[b.when] || WHEN_BIG.w2
+  useEffect(() => {
+    if (!open) return
+    const close = (e) => { if (!e.target.closest('.bf')) setOpen(null) }
+    const esc = (e) => { if (e.key === 'Escape') setOpen(null) }
+    document.addEventListener('pointerdown', close)
+    document.addEventListener('keydown', esc)
+    return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', esc) }
+  }, [open])
 
   // Typing is optional: a simple parser fills the same choices.
   const parse = (raw) => {
@@ -72,16 +85,25 @@ export function Start({ ctx }) {
       />
       {heard && <p className="heard">{heard}</p>}
 
-      <div className="basics card">
-        <Group label="Who’s coming" hint="A range is fine. Plans change.">
-          {PEOPLE.map((p) => <Chip key={p} on={b.people === p} onClick={() => setB({ people: p })}>{p} people</Chip>)}
-        </Group>
-        <Group label="Starting from">
-          {FROM.map((c) => <Chip key={c} on={b.from === c} onClick={() => setB({ from: c })}>{c}</Chip>)}
-        </Group>
-        <Group label="When">
-          {WHEN.map((w) => <Chip key={w.id} on={b.when === w.id} onClick={() => setB({ when: w.id })}>{w.label}<small>{w.sub}</small></Chip>)}
-        </Group>
+      <div className="basics-bar card" role="group" aria-label="Trip basics">
+        <Field
+          icon={<UsersThree size={16} />} label="Who’s coming" open={open === 'people'} onToggle={() => toggle('people')}
+          big={b.people} unit="people" sub="A range is fine"
+          options={PEOPLE.map((p) => ({ id: p, title: p + ' people' }))}
+          value={b.people} onPick={(v) => pick({ people: v })}
+        />
+        <Field
+          icon={<MapPin size={16} />} label="Starting from" open={open === 'from'} onToggle={() => toggle('from')}
+          big={b.from} sub={CODES[b.from]}
+          options={FROM.map((c) => ({ id: c, title: c, sub: CODES[c] }))}
+          value={b.from} onPick={(v) => pick({ from: v })}
+        />
+        <Field
+          icon={<CalendarBlank size={16} />} label="When" open={open === 'when'} onToggle={() => toggle('when')}
+          big={w.big} unit={w.unit} sub={w.day}
+          options={WHEN.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.when} onPick={(v) => pick({ when: v })}
+        />
       </div>
 
       <div className="start-cta">
@@ -92,11 +114,31 @@ export function Start({ ctx }) {
   )
 }
 
-function Group({ label, hint, children }) {
+const CODES = { Bengaluru: 'BLR airport · SBC station', Mumbai: 'BOM airport · CSMT station', Delhi: 'DEL airport · NDLS station', Hyderabad: 'HYD airport · SC station' }
+const WHEN_BIG = {
+  w1: { big: '20–22', unit: 'Nov’26', day: 'Fri – Sun · This weekend' },
+  w2: { big: '27–29', unit: 'Nov’26', day: 'Fri – Sun · Next weekend' },
+  w3: { big: 'Pick', unit: 'dates', day: 'Choose on a calendar' },
+}
+
+function Field({ icon, label, big, unit, sub, open, onToggle, options, value, onPick }) {
   return (
-    <div className="group">
-      <span className="g-label">{label}{hint && <small> · {hint}</small>}</span>
-      <div className="g-chips">{children}</div>
+    <div className={'bf' + (open ? ' open' : '')}>
+      <button className="bf-btn" aria-haspopup="listbox" aria-expanded={open} onClick={onToggle}>
+        <span className="bf-label">{icon}{label}<CaretDown className="bf-caret" size={13} weight="bold" /></span>
+        <span className="bf-big">{big}{unit && <small> {unit}</small>}</span>
+        <span className="bf-sub">{sub}</span>
+      </button>
+      {open && (
+        <div className="bf-pop" role="listbox" aria-label={label}>
+          {options.map((o) => (
+            <button key={o.id} role="option" aria-selected={value === o.id} className={'bf-opt' + (value === o.id ? ' on' : '')} onClick={() => onPick(o.id)}>
+              <span><b>{o.title}</b>{o.sub && <small>{o.sub}</small>}</span>
+              {value === o.id && <Check size={16} weight="bold" />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
