@@ -19,9 +19,20 @@ export const EXPERIENCES = [
   { id: 'party', label: 'Nightlife', sub: 'Clubs, live music', art: 'party' },
   { id: 'heritage', label: 'Heritage & food', sub: 'Old towns, local food', art: 'heritage' },
   { id: 'quiet', label: 'Quiet escape', sub: 'Nature, no crowds', art: 'quiet' },
+  { id: 'romantic', label: 'Romantic getaway', sub: 'Lakes, sunsets, slow dinners', art: 'romantic' },
+  { id: 'adventure', label: 'Adventure', sub: 'Rafting, camps, treks', art: 'adventure' },
 ]
 
-export const PEOPLE = ['3–4', '5–6', '7–8', '9+']
+export const PEOPLE = ['1', '2', '3–4', '5–6', '7–8', '9+']
+// Who's coming → how Myra plans. Solo and couple trips skip the group vote.
+export const PARTY = {
+  '1': { mode: 'solo', label: 'Just me', big: '1', unit: 'person', sub: 'Solo trip' },
+  '2': { mode: 'couple', label: '2 people', big: '2', unit: 'people', sub: 'Couple or two friends' },
+  '3–4': { mode: 'group', label: '3–4 people', big: '3–4', unit: 'people', sub: 'Small group · friends vote' },
+  '5–6': { mode: 'group', label: '5–6 people', big: '5–6', unit: 'people', sub: 'Group · friends vote' },
+  '7–8': { mode: 'group', label: '7–8 people', big: '7–8', unit: 'people', sub: 'Group · friends vote' },
+  '9+': { mode: 'group', label: '9+ people', big: '9+', unit: 'people', sub: 'Big group · friends vote' },
+}
 export const FROM = ['Bengaluru', 'Mumbai', 'Delhi', 'Hyderabad']
 export const WHEN = [
   { id: 'w1', label: 'This weekend', sub: 'Fri 20 – Sun 22 Nov' },
@@ -109,7 +120,7 @@ export const STAYS = [
   },
   {
     id: 's2', name: 'Lazy Gecko Hostel', area: 'Anjuna', art: 'hostel',
-    type: 'Private 6-bed room', pricing: 'pp', rate: 950,
+    type: 'Private 6-bed room', solo: 'Bed in a 6-bed room', couple: '2 beds in a 6-bed room', pricing: 'pp', rate: 950,
     rating: 4.4, reviews: 1204, beach: '400 m to Anjuna Beach',
     amen: ['Café', 'Wi-Fi', 'Lockers', 'Common area'],
     review: '“Social, clean and right by the beach. Thin walls though.”',
@@ -117,7 +128,7 @@ export const STAYS = [
   },
   {
     id: 's3', name: 'Sunset Bay Resort', area: 'Vagator', art: 'resort',
-    type: '3 deluxe rooms', pricing: 'pp', rate: 3400,
+    type: '3 deluxe rooms', solo: '1 deluxe room', couple: '1 deluxe room for 2', pricing: 'pp', rate: 3400,
     rating: 4.3, reviews: 2310, beach: 'On Vagator Beach',
     amen: ['Shared pool', 'Spa', 'Restaurant', 'Breakfast'],
     review: '“Amazing sunsets from the room. The restaurant is pricey.”',
@@ -132,6 +143,9 @@ export const STAYS = [
     map: { x: 72, y: 62 },
   },
 ]
+
+// Room description for who's going.
+export const stayType = (x, mode) => (mode !== 'group' && x[mode]) || x.type
 
 export const NIGHTS = 2
 
@@ -168,4 +182,11 @@ export const PRESET_COMMENTS = {
 export const HOST_STEPS = [
   'Trip basics', 'City', 'Transport', 'Stay', 'Share with friends', 'Friends vote', 'Review & book',
 ]
+export const DUO_STEPS = ['Trip basics', 'City', 'Transport', 'Stay', 'Review & book']
+// Myra's stay pick depends on who's going.
+export const STAY_PICK = { solo: 's2', couple: 's3', group: 's1' }
+export const STAY_WHY = {
+  solo: 'Lazy Gecko is my pick for one: 400 m from Anjuna Beach, social if you want company, and the cheapest bed here.',
+  couple: 'Sunset Bay is my pick for two: a deluxe room right on Vagator Beach, breakfast included, and sunsets from the room.',
+}
 export const FRIEND_STEPS = ['Transport', 'Stay', 'Send your picks']

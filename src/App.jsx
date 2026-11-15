@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CITIES, TRANSPORT, TRANSPORT_ALT, STAYS, FRIENDS, PRESET_VOTES, PRESET_COMMENTS, DEMO_FRIEND } from './data.js'
+import { CITIES, TRANSPORT, TRANSPORT_ALT, STAYS, FRIENDS, PRESET_VOTES, PRESET_COMMENTS, DEMO_FRIEND, PARTY, STAY_PICK, HOST_STEPS, DUO_STEPS } from './data.js'
 import { Home } from './screens/Home.jsx'
 import { Start } from './screens/Start.jsx'
 import { HostPlan } from './screens/HostPlan.jsx'
@@ -60,11 +60,13 @@ export default function App() {
     stay: [...PRESET_COMMENTS.stay, ...s.friend.comments.stay],
   }
 
-  const people = s.dropout === 'accepted' ? 5 : 6
+  const mode = PARTY[s.basics.people]?.mode || 'group'
+  const people = mode === 'solo' ? 1 : mode === 'couple' ? 2 : s.dropout === 'accepted' ? 5 : 6
   const going = FRIENDS.filter((f) => !(s.dropout === 'accepted' && f.id === 'riya'))
 
   const ctx = {
-    s, set, framed, transportList, allTransport, votes, comments, people, going,
+    s, set, framed, transportList, allTransport, votes, comments, people, going, mode,
+    group: mode === 'group', steps: mode === 'group' ? HOST_STEPS : DUO_STEPS, stayPick: STAY_PICK[mode],
     city: CITIES.find((c) => c.id === s.city),
     go: (view, extra = {}) => {
       set({ view, detail: null, thread: [], ...extra })

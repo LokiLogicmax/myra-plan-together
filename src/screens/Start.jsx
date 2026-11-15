@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { UsersThree, MapPin, CalendarBlank, CaretDown, Check } from '@phosphor-icons/react'
-import { EXPERIENCES, PEOPLE, FROM, WHEN } from '../data.js'
+import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY } from '../data.js'
 import { Scene, MyraMark, MyraOrb } from '../art.jsx'
 import { VoiceInput } from './Chrome.jsx'
 
@@ -26,13 +26,17 @@ export function Start({ ctx }) {
   const parse = (raw) => {
     const t = raw.toLowerCase()
     const patch = {}
-    const n = parseInt((t.match(/\b(\d{1,2})\b/) || [])[1] || ({ three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
-    if (n) patch.people = n <= 4 ? '3–4' : n <= 6 ? '5–6' : n <= 8 ? '7–8' : '9+'
+    const n = parseInt((t.match(/\b(\d{1,2})\b/) || [])[1] || ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(one|two|three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
+    if (/\b(solo|alone|just me|by myself)\b/.test(t)) patch.people = '1'
+    else if (/\b(couple|partner|wife|husband|girlfriend|boyfriend|honeymoon)\b/.test(t)) patch.people = '2'
+    else if (n) patch.people = n === 1 ? '1' : n === 2 ? '2' : n <= 4 ? '3–4' : n <= 6 ? '5–6' : n <= 8 ? '7–8' : '9+'
     if (/beach|sea|chill|goa/.test(t)) patch.exp = 'beach'
     else if (/mountain|hill|trek|snow/.test(t)) patch.exp = 'hills'
     else if (/party|club|night/.test(t)) patch.exp = 'party'
     else if (/heritage|food|history|old/.test(t)) patch.exp = 'heritage'
     else if (/quiet|calm|peace|nature/.test(t)) patch.exp = 'quiet'
+    else if (/romantic|honeymoon|anniversary|couple|partner/.test(t)) patch.exp = 'romantic'
+    else if (/adventure|raft|camp|bungee|paraglid/.test(t)) patch.exp = 'adventure'
     const from = FROM.find((c) => t.includes(c.toLowerCase()) || (c === 'Bengaluru' && t.includes('bangalore')))
     if (from) patch.from = from
     if (/this weekend/.test(t)) patch.when = 'w1'
@@ -40,7 +44,7 @@ export function Start({ ctx }) {
     setB(patch)
     const bits = []
     if (patch.exp) bits.push(EXPERIENCES.find((e) => e.id === patch.exp).label)
-    if (patch.people) bits.push(patch.people + ' people')
+    if (patch.people) bits.push(PARTY[patch.people].label)
     if (patch.from) bits.push('from ' + patch.from)
     if (patch.when) bits.push(WHEN.find((w) => w.id === patch.when).sub)
     setHeard(bits.length ? 'Got it: ' + bits.join(' · ') + '. I’ve ticked these below. Change anything you like.' : 'I didn’t catch the details. Tap the cards below instead.')
@@ -67,7 +71,7 @@ export function Start({ ctx }) {
             role="radio"
             aria-checked={b.exp === e.id}
             className={'fan-card' + (b.exp === e.id ? ' on' : '')}
-            style={{ '--r': `${(i - 2) * 4}deg`, '--y': `${Math.abs(i - 2) * 8}px` }}
+            style={{ '--r': `${(i - 3) * 3.5}deg`, '--y': `${Math.abs(i - 3) * 7}px` }}
             onClick={() => setB({ exp: e.id })}
           >
             <Scene kind={e.art} label={e.label} />
@@ -88,8 +92,8 @@ export function Start({ ctx }) {
       <div className="basics-bar card" role="group" aria-label="Trip basics">
         <Field
           icon={<UsersThree size={16} />} label="Who’s coming" open={open === 'people'} onToggle={() => toggle('people')}
-          big={b.people} unit="people" sub="A range is fine"
-          options={PEOPLE.map((p) => ({ id: p, title: p + ' people' }))}
+          big={PARTY[b.people].big} unit={PARTY[b.people].unit} sub={PARTY[b.people].sub}
+          options={PEOPLE.map((p) => ({ id: p, title: PARTY[p].label, sub: PARTY[p].sub }))}
           value={b.people} onPick={(v) => pick({ people: v })}
         />
         <Field

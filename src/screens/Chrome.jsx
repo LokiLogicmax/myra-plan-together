@@ -52,7 +52,7 @@ export function ConceptNote({ ctx, restart }) {
       )}
       <p className="jump">
         Demo: <button onClick={restart}>Restart</button>
-        {ready ? <>· <button onClick={() => go('friend')}>Friend's view</button> · <button onClick={() => go('review')}>Results</button></> : null}
+        {ready && ctx.group ? <>· <button onClick={() => go('friend')}>Friend's view</button> · <button onClick={() => go('review')}>Results</button></> : null}
       </p>
     </footer>
   )

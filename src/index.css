@@ -791,3 +791,13 @@ body { background: #F7F8FC; }
   .bf-big small { font-size: 15px; }
   .bf-pop { left: 12px; right: 12px; min-width: 0; }
 }
+
+/* Trip kinds: 7 smaller cards */
+.fan-card { width: 140px; height: 178px; margin: 0 -7px; }
+.fan-label { padding: 24px 10px 10px; }
+.fan-label b { font-size: 14px; line-height: 1.15; }
+.fan-label small { font-size: 11.5px; }
+.fan-card .tick { width: 22px; height: 22px; font-size: 12px; }
+@container device (max-width: 760px) { .fan-card { width: 118px; height: 150px; margin: 0 -5px; } }
+.fan-card { flex: none; margin: 0 -4px; }
+@media (max-width: 1000px) { .fan-card { width: 118px; height: 152px; } .fan-label b { font-size: 13px; } }
