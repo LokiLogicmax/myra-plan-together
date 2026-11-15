@@ -757,7 +757,6 @@ body { background: #F7F8FC; }
 .start-head h1.start-logo { background: none; line-height: 0; display: flex; justify-content: center; }
 .start-logo img { height: 84px; width: auto; display: block; }
 @container device (max-width: 760px) { .start-logo img { height: 56px; } }
-.hero-orb.after { margin: 26px 0 18px; }
 @container device (max-width: 760px) { .hero-orb.after { margin: 18px 0 10px; } }
 
 /* Trip basics: MakeMyTrip-style field bar */
@@ -801,3 +800,12 @@ body { background: #F7F8FC; }
 @container device (max-width: 760px) { .fan-card { width: 118px; height: 150px; margin: 0 -5px; } }
 .fan-card { flex: none; margin: 0 -4px; }
 @media (max-width: 1000px) { .fan-card { width: 118px; height: 152px; } .fan-label b { font-size: 13px; } }
+
+/* Big Myra orb glowing behind the MakeMyTrip lockup */
+.brand-lockup { position: relative; isolation: isolate; padding: 64px 0 60px; margin-bottom: 14px; }
+.hero-orb.behind { position: absolute; inset: 0; display: grid; place-items: center; z-index: -1; margin: 0; pointer-events: none; opacity: .9; }
+.hero-orb.behind .orb { --s: 260px !important; }
+@container device (max-width: 760px) {
+  .brand-lockup { padding: 36px 0 28px; }
+  .hero-orb.behind .orb { --s: 170px !important; }
+}
