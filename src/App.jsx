@@ -21,6 +21,7 @@ const INITIAL = {
   detail: null,
   thread: [],
   friend: { stage: 'transport', votes: { transport: null, stay: null }, comments: { transport: [], stay: [] }, sent: false },
+  shared: false, // friends can vote only after the host shares the link
   final: { transport: null, stay: null },
   dropout: null, // null → not yet happened · 'pending' · 'accepted' · 'kept'
   pay: null, // null · 'open' · 'paying'

@@ -66,7 +66,7 @@ export function HostPlan({ ctx }) {
   if (s.stage === 'share') ({ body, title, sub, actions, myra, back } = ShareStage(ctx, toStage))
 
   return (
-    <Planner ctx={ctx} steps={ctx.steps} current={stageIdx} chips={chips} capsule={capsule}
+    <Planner ctx={ctx} steps={ctx.steps} current={stageIdx + (s.stage === 'share' && s.shared ? 1 : 0)} chips={chips} capsule={capsule}
       title={title} sub={sub} back={back} actions={actions} myra={myra}>
       {body}
     </Planner>
@@ -323,7 +323,8 @@ function StayMap({ ctx }) {
 
 /* ---------- Share ---------- */
 function ShareStage(ctx, toStage) {
-  const { s, go, toast, allTransport, stays } = ctx
+  const { s, set, go, toast, allTransport, stays } = ctx
+  const share = (how) => { set({ shared: true }); toast(how === 'wa' ? 'Shared on WhatsApp (demo). Friends can vote now.' : 'Link copied (demo). Friends can vote now.') }
   const tOpts = allTransport.filter((t) => s.shortTransport.includes(t.id))
   const sOpts = stays.filter((x) => s.shortStay.includes(x.id))
   const msg = `Goa, 27–29 Nov! 🏖️ I’ve fixed the city. Pick how we travel and where we stay. Takes 2 minutes, votes close Wed 25 Nov, 9 pm.`
@@ -351,21 +352,25 @@ function ShareStage(ctx, toStage) {
             </div>
           </div>
           <div className="share-btns">
-            <button className="btn wa-btn" onClick={() => toast('WhatsApp would open here (not in this prototype).')}>Share on WhatsApp</button>
-            <button className="btn" onClick={() => toast('Link copied (demo).')}>Copy link</button>
+            <button className="btn wa-btn" onClick={() => share('wa')}>Share on WhatsApp</button>
+            <button className="btn" onClick={() => share('copy')}>Copy link</button>
           </div>
           <p className="deadline">⏱ Votes close <b>Wed 25 Nov, 9 pm</b>. Myra reminds anyone who hasn’t voted the evening before.</p>
         </div>
       </div>
     ),
-    actions: (
+    actions: s.shared ? (
       <>
-        <button className="btn ghost" onClick={() => go('review')}>Skip to results</button>
+        <button className="btn ghost" onClick={() => go('review')}>See votes</button>
         <button className="cta" onClick={() => go('friend', { friend: { ...s.friend, stage: 'transport' } })}>Open as a friend (demo)</button>
       </>
+    ) : (
+      <button className="cta" onClick={() => share('wa')}>Share the link</button>
     ),
     myra: {
-      intro: 'I’ve written the message for the group. When friends vote, I’ll sum it up for you, so you don’t have to chase anyone on WhatsApp.',
+      intro: s.shared
+        ? 'Link shared. Friends can vote now. I’ll sum up the votes for you, so you don’t have to chase anyone on WhatsApp.'
+        : 'Your options are ready. I’ve written the message for the group. Share the link and friends can start voting.',
       replies: [
         { label: 'What if someone drops out?', answer: 'You set a range of 5–6, so the plan still works with 5. I’ll show the new price per person before anything is booked.' },
         { label: 'Can they change the city?', answer: 'No. You fixed Goa. They choose transport and stay, and can comment on anything.' },
