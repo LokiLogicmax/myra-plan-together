@@ -716,3 +716,31 @@ body { background: #F7F8FC; }
 }
 
 .home-desk > .strip, .home-desk > .myra-banner { position: relative; z-index: 1; }
+
+/* v0.2: Myra colour identity: red, white, blue.
+   The gradient passes through white, so red and blue never mix into a muddy purple.
+   MakeMyTrip's own SEARCH button keeps its blue. */
+:root {
+  --myra-red: #EB2026; --myra-blue: #008CFF; --myra-ink: #0B2447;
+  --myra-cta: linear-gradient(100deg, #FF8C90 0%, #FFD3D5 30%, #FFFFFF 50%, #CDE6FF 70%, #7CC0FF 100%);
+  --myra-tint: linear-gradient(120deg, #FFECEE 0%, #FFFFFF 48%, #E6F3FF 100%);
+  --myra-deep: linear-gradient(110deg, #FFB3B6 0%, #FFE4E5 28%, #FFFFFF 50%, #DCEEFF 72%, #9FD0FF 100%);
+}
+.cta { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -10px 8px 22px -12px rgba(235, 32, 38, .55), 10px 8px 22px -12px rgba(0, 140, 255, .6), inset 0 0 0 1px rgba(255, 255, 255, .7); }
+.cta:hover:not(:disabled) { filter: saturate(1.25); }
+.cta:disabled { background: #E3E3E3; color: #9A9A9A; box-shadow: none; }
+.cta.ghost { background: #fff; color: var(--myra-ink); box-shadow: inset 0 0 0 1.5px transparent; border: 1.5px solid transparent; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(100deg, var(--myra-red), #fff 50%, var(--myra-blue)) border-box; }
+.search-wrap .cta { background: var(--cta); color: #fff; box-shadow: 0 10px 22px -10px rgba(6, 90, 243, .7); }
+
+.myra-card { background: var(--myra-tint) padding-box, linear-gradient(120deg, rgba(235, 32, 38, .45), rgba(255, 255, 255, .9) 50%, rgba(0, 140, 255, .55)) border-box; }
+.myra-tab { background: var(--myra-tint); color: var(--myra-ink); }
+.myra-tab:hover { background: var(--myra-deep); }
+.pick { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -4px 4px 12px -6px rgba(235, 32, 38, .6), 4px 4px 12px -6px rgba(0, 140, 255, .6); }
+
+.myra-banner { background: #fff; color: var(--myra-ink); }
+.mb-text { background: var(--myra-deep); }
+.mb-kicker { color: var(--myra-red); opacity: 1; }
+.mb-sub { opacity: .8; }
+.mb-cta { background: var(--myra-ink); color: #fff; }
+.vbtn { background: var(--myra-cta); color: var(--myra-ink); box-shadow: -6px 6px 16px -8px rgba(235, 32, 38, .6), 6px 6px 16px -8px rgba(0, 140, 255, .7), inset 0 0 0 1px rgba(255, 255, 255, .8); }
+.vbtn.voice.on { color: #fff; }
