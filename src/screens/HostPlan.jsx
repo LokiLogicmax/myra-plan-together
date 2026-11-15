@@ -2,6 +2,7 @@ import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, STAY_WHY, inr, stayPerPerson, 
 import { Compass, MapPin, CalendarBlank, UsersThree, MapTrifold, Train, Bed, CaretDown, Lock } from '@phosphor-icons/react'
 import { Scene, ModeIcon } from '../art.jsx'
 import { Planner } from './Chrome.jsx'
+import { CityGuide } from './CityGuide.jsx'
 
 export const liveTime = () => new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })
 
@@ -80,8 +81,10 @@ function CityStage(ctx, toStage) {
   const when = WHEN.find((w) => w.id === s.basics.when)
   return {
     title: 'Where to?',
-    sub: `Three places for ${exp?.label.toLowerCase()} from ${s.basics.from}. ` + (group ? 'You fix the city; your friends will choose the transport and the stay.' : 'Pick one, then choose how you travel and where you stay.'),
     body: s.loading ? <Skeletons n={3} /> : (
+      <>
+      {chosen && <CityGuide key={chosen.id} city={chosen} />}
+      <p className="cg-more">{chosen ? 'Compare cities' : 'Three places for ' + exp?.label.toLowerCase() + ' from ' + s.basics.from}</p>
       <div className="city-grid">
         {CITIES.map((c) => (
           <button key={c.id} className={'city-card' + (s.city === c.id ? ' on' : '')} onClick={() => set({ city: c.id })} aria-pressed={s.city === c.id}>
@@ -98,6 +101,7 @@ function CityStage(ctx, toStage) {
           </button>
         ))}
       </div>
+      </>
     ),
     actions: (
       <button className="cta" disabled={!chosen || s.loading} onClick={() => toStage('transport', 'transport')}>
