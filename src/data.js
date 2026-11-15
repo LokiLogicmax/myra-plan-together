@@ -31,7 +31,7 @@ export const WHEN = [
 
 export const CITIES = [
   {
-    id: 'goa', name: 'Goa', art: 'beach', pick: true,
+    id: 'goa', name: 'Goa', art: 'goa', pick: true,
     tag: 'In season',
     weather: '24–32°C, dry and sunny',
     reach: 'Overnight train · 1h 10m flight',
@@ -40,7 +40,7 @@ export const CITIES = [
     why: 'Late November is the start of the season, and you can go by overnight train, so nobody spends Friday travelling.',
   },
   {
-    id: 'gokarna', name: 'Gokarna', art: 'cliff',
+    id: 'gokarna', name: 'Gokarna', art: 'gokarna',
     tag: 'Quieter',
     weather: '23–31°C, dry',
     reach: 'Overnight bus · 9h',
@@ -49,7 +49,7 @@ export const CITIES = [
     why: 'Cheaper and calmer than Goa, but fewer places to eat and no direct trains.',
   },
   {
-    id: 'pondy', name: 'Puducherry', art: 'heritage',
+    id: 'pondy', name: 'Puducherry', art: 'pondy',
     tag: 'Best for food',
     weather: '24–29°C, some rain',
     reach: 'Road trip · 6h 30m',

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Logo, MyraOrb } from '../art.jsx'
+import { Logo, MyraOrb, MyraMark } from '../art.jsx'
 import { HOST, FRIENDS } from '../data.js'
+import { PHOTOS } from '../photos.js'
 
 export function Header({ ctx }) {
   const { s, go } = ctx
@@ -10,6 +11,7 @@ export function Header({ ctx }) {
       <div className="hdr-in">
         <button className="hdr-menu" aria-label="Menu"><span /><span /><span /></button>
         <button className="logo-btn" onClick={() => go('home')} aria-label="Home"><Logo /></button>
+        <span className="concept-pill" title="Concept prototype, not affiliated with MakeMyTrip">Concept</span>
         <nav className="hdr-links">
           <a><b>List Your Property</b><small>Grow your business!</small></a>
           <a><b>Introducing myBiz</b><small>Business Travel Solution</small></a>
@@ -29,6 +31,7 @@ export function Header({ ctx }) {
 
 export function ConceptNote({ ctx, restart }) {
   const { go, s } = ctx
+  const [credits, setCredits] = useState(false)
   const ready = s.city && s.shortTransport.length && s.shortStay.length
   return (
     <footer className="concept">
@@ -36,6 +39,17 @@ export function ConceptNote({ ctx, restart }) {
         Concept prototype made for a design assignment. It is not affiliated with, endorsed by or connected to MakeMyTrip.
         All prices, seats, reviews and people are sample data. Nothing is booked and no payment is taken.
       </p>
+      <p>
+        Logo: MakeMyTrip, from Wikimedia Commons. Photos: Wikimedia Commons contributors, used under their licences; stays and prices are made up.{' '}
+        <button onClick={() => setCredits((c) => !c)}>{credits ? 'Hide photo credits' : 'Photo credits'}</button>
+      </p>
+      {credits && (
+        <ul className="credits">
+          {Object.values(PHOTOS).map((p) => (
+            <li key={p.src}><a href={p.page} target="_blank" rel="noreferrer">{p.title}</a> · {p.author} · {p.license}</li>
+          ))}
+        </ul>
+      )}
       <p className="jump">
         Demo: <button onClick={restart}>Restart</button>
         {ready ? <>· <button onClick={() => go('friend')}>Friend's view</button> · <button onClick={() => go('review')}>Results</button></> : null}
@@ -142,7 +156,7 @@ export function MyraCard({ ctx, myra }) {
   if (!myra) return null
   return (
     <div className="myra-card">
-      <div className="myra-head"><MyraOrb size={28} /> <span className="myra-word">myra</span></div>
+      <div className="myra-head"><MyraOrb size={30} /> <MyraMark size={22} /></div>
       <p className="myra-msg">{myra.intro}</p>
       {s.thread.map((m, i) => (
         <p key={i} className={'bubble ' + m.who}>{m.text}</p>
@@ -159,29 +173,77 @@ export function MyraCard({ ctx, myra }) {
 }
 
 export function ChatBox({ ctx, className = '' }) {
+  return (
+    <VoiceInput
+      className={'chatbox ' + className}
+      placeholder="Ask Myra anything, or just tap the options"
+      sample="is there anything cheaper?"
+      onSubmit={(t) => ctx.say(t, answer(t, ctx))}
+    />
+  )
+}
+
+// One input for typing or speaking. The round button records voice; it becomes "send" once you type.
+export function VoiceInput({ className = '', placeholder, sample, onSubmit, lead }) {
   const [text, setText] = useState('')
-  const [listening, setListening] = useState(false)
+  const [rec, setRec] = useState(false)
+  const [secs, setSecs] = useState(0)
+  const timers = useRef([])
+  const heard = useRef('')
+  const clear = () => { timers.current.forEach(clearTimeout); timers.current = [] }
+  useEffect(() => clear, [])
+
+  const start = () => {
+    clear(); setText(''); heard.current = ''; setRec(true); setSecs(0)
+    const words = sample.split(' ')
+    // Words arrive as you speak, with a pause in the middle (people think while they talk).
+    let t = 700
+    words.forEach((w, i) => {
+      t += i === Math.floor(words.length / 2) ? 900 : 260
+      timers.current.push(setTimeout(() => { heard.current = (heard.current ? heard.current + ' ' : '') + w; setText(heard.current) }, t))
+    })
+    for (let k = 1; k <= Math.ceil((t + 1200) / 1000); k++) timers.current.push(setTimeout(() => setSecs(k), k * 1000))
+    timers.current.push(setTimeout(() => stop(), t + 1200))
+  }
+  // Stopping sends what was heard, like a voice note.
+  const stop = () => {
+    clear(); setRec(false)
+    const t = heard.current.trim()
+    heard.current = ''
+    setText('')
+    if (t) onSubmit(t)
+  }
   const submit = (e) => {
     e.preventDefault()
     const t = text.trim()
-    if (!t) return
-    ctx.say(t, answer(t, ctx))
+    if (!t || rec) return
+    onSubmit(t)
     setText('')
   }
-  const mic = () => {
-    setListening(true)
-    setTimeout(() => {
-      setListening(false)
-      setText('is there anything cheaper?')
-    }, 1600)
-  }
+  const typed = text.trim().length > 0 && !rec
   return (
-    <form className={'chatbox ' + className} onSubmit={submit}>
-      <input value={text} onChange={(e) => setText(e.target.value)} placeholder={listening ? 'Listening… take your time' : 'Ask Myra anything, or just tap the options'} aria-label="Message Myra" />
-      <button type="button" className={'mic' + (listening ? ' on' : '')} onClick={mic} aria-label="Speak instead (optional)">
-        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" fill="none" /></svg>
-      </button>
-      <button type="submit" className="send" aria-label="Send">↑</button>
+    <form className={'vinput ' + className + (rec ? ' rec' : '')} onSubmit={submit}>
+      {lead !== false && <MyraOrb size={28} state={rec ? 'listen' : 'idle'} />}
+      {rec && <span className="wave" aria-hidden="true">{Array.from({ length: 5 }).map((_, i) => <i key={i} style={{ '--d': i * 0.12 + 's' }} />)}</span>}
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        readOnly={rec}
+        placeholder={rec ? 'Listening… take your time' : placeholder}
+        aria-label={placeholder}
+      />
+      {rec && <span className="rec-time">0:{String(secs).padStart(2, '0')}</span>}
+      {typed ? (
+        <button type="submit" className="vbtn send" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+      ) : (
+        <button type="button" className={'vbtn voice' + (rec ? ' on' : '')} onClick={() => (rec ? stop() : start())} aria-label={rec ? 'Stop recording' : 'Record a voice message'} aria-pressed={rec}>
+          {rec
+            ? <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3" fill="currentColor" /></svg>
+            : <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" /></svg>}
+        </button>
+      )}
     </form>
   )
 }

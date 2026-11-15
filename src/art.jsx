@@ -1,5 +1,6 @@
 // Illustrated stand-ins for photos. Each scene is a small SVG, so the prototype has no image files.
-import { useId } from 'react'
+import { useId, useState } from 'react'
+import { PHOTOS } from './photos.js'
 
 const PALETTES = {
   beach: ['#FFB36B', '#FFD9A0', '#2BA6C9', '#F3DDB0'],
@@ -15,6 +16,15 @@ const PALETTES = {
 }
 
 export function Scene({ kind = 'beach', className = '', label }) {
+  const [failed, setFailed] = useState(false)
+  const photo = PHOTOS[kind]
+  if (photo && !failed) {
+    return <img className={'scene photo ' + className} src={photo.src} alt={label || photo.title} loading="lazy" decoding="async" onError={() => setFailed(true)} />
+  }
+  return <Illustration kind={kind === 'goa' ? 'beach' : kind === 'gokarna' ? 'cliff' : kind === 'pondy' ? 'heritage' : kind} className={className} label={label} />
+}
+
+function Illustration({ kind, className, label }) {
   const uid = useId().replace(/:/g, '')
   const [sky1, sky2, sea, land] = PALETTES[kind] || PALETTES.beach
   const night = kind === 'party'
@@ -162,14 +172,34 @@ export function Icon({ name, size = 40 }) {
   }
 }
 
-export function MyraOrb({ size = 36, pulse = false }) {
-  return <span className={'myra-orb' + (pulse ? ' pulse' : '')} style={{ width: size, height: size }} aria-hidden="true" />
+// Myra's orb: a living, slowly swirling sphere. States: idle, think (faster), listen (pulses with voice).
+export function MyraOrb({ size = 36, pulse = false, state }) {
+  const st = state || (pulse ? 'think' : 'idle')
+  return (
+    <span className={'orb orb-' + st} style={{ '--s': size + 'px' }} aria-hidden="true">
+      <i className="orb-swirl" />
+      <i className="orb-blob a" />
+      <i className="orb-blob b" />
+      <i className="orb-core" />
+      <i className="orb-gloss" />
+    </span>
+  )
 }
 
-export function Logo({ dark = false }) {
+// Myra wordmark: script lettering in Myra's navy-to-blue, with its sparkle.
+export function MyraMark({ size = 22 }) {
   return (
-    <span className={'mmt-logo' + (dark ? ' dark' : '')} aria-label="makemytrip">
-      <span>make</span><b>my</b><span>trip</span>
+    <span className="myra-mark" style={{ fontSize: size }}>
+      myra
+      <svg className="sparkle" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 6 5 10.5 12 12-7 1.5-11 6-12 12-1-6-5-10.5-12-12C7 10.5 11 6 12 0z" /></svg>
+    </span>
+  )
+}
+
+export function Logo() {
+  return (
+    <span className="mmt-logo">
+      <img src="/brand/mmt-logo.svg" alt="makemytrip" width="94" height="30" />
     </span>
   )
 }

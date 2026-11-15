@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { EXPERIENCES, PEOPLE, FROM, WHEN } from '../data.js'
-import { Scene, MyraOrb } from '../art.jsx'
+import { Scene, MyraMark, MyraOrb } from '../art.jsx'
+import { VoiceInput } from './Chrome.jsx'
 
 export function Start({ ctx }) {
   const { s, set, go } = ctx
   const b = s.basics
   const setB = (patch) => set({ basics: { ...b, ...patch } })
-  const [text, setText] = useState('')
   const [heard, setHeard] = useState(null)
-  const [listening, setListening] = useState(false)
 
   // Typing is optional: a simple parser fills the same choices.
   const parse = (raw) => {
@@ -34,17 +33,6 @@ export function Start({ ctx }) {
     setHeard(bits.length ? 'Got it: ' + bits.join(' · ') + '. I’ve ticked these below. Change anything you like.' : 'I didn’t catch the details. Tap the cards below instead.')
   }
 
-  const onSubmit = (e) => { e.preventDefault(); if (text.trim()) parse(text) }
-  const mic = () => {
-    setListening(true)
-    setTimeout(() => {
-      setListening(false)
-      const said = 'we are six friends, beaches, from Bangalore, next weekend'
-      setText(said)
-      parse(said)
-    }, 1800)
-  }
-
   const begin = () => {
     go('plan', { stage: 'city', loading: 'city' })
   }
@@ -53,8 +41,9 @@ export function Start({ ctx }) {
     <div className="start">
       <button className="start-close" onClick={() => go('home')} aria-label="Close">✕</button>
       <div className="start-head">
+        <div className="hero-orb"><MyraOrb size={72} /></div>
         <h1>Make my trip</h1>
-        <p className="with">with <span className="myra-word big">myra</span></p>
+        <p className="with">with <MyraMark size={40} /></p>
         <p className="start-q">What kind of trip are you in the mood for?</p>
       </div>
 
@@ -75,14 +64,12 @@ export function Start({ ctx }) {
         ))}
       </div>
 
-      <form className="tell" onSubmit={onSubmit}>
-        <MyraOrb size={26} pulse={listening} />
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder={listening ? 'Listening… take your time' : 'Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”'} aria-label="Tell Myra about the trip" />
-        <button type="button" className={'mic' + (listening ? ' on' : '')} onClick={mic} aria-label="Speak instead (optional)">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" fill="none" /></svg>
-        </button>
-        <button type="submit" className="send" aria-label="Send">↑</button>
-      </form>
+      <VoiceInput
+        className="tell"
+        placeholder="Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”"
+        sample="we are six friends… beaches, from Bangalore, next weekend"
+        onSubmit={parse}
+      />
       {heard && <p className="heard">{heard}</p>}
 
       <div className="basics card">
