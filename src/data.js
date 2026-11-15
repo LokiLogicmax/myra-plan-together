@@ -119,6 +119,7 @@ export const STAYS = [
     why: 'Sleeps 6 in 3 rooms, has a pool, and costs less per person than booking 3 hotel rooms.',
     review: '“Perfect for our group of 6. The caretaker cooked a Goan breakfast for us.”',
     map: { x: 58, y: 40 },
+    unit: 'villa', sleeps: 6, left: [1, 1],
   },
   {
     id: 's2', name: 'Lazy Gecko Hostel', area: 'Anjuna', art: 'hostel',
@@ -127,6 +128,7 @@ export const STAYS = [
     amen: ['Café', 'Wi-Fi', 'Lockers', 'Common area'],
     review: '“Social, clean and right by the beach. Thin walls though.”',
     map: { x: 30, y: 52 },
+    unit: 'bed', sleeps: 1, left: [9, 7],
   },
   {
     id: 's3', name: 'Sunset Bay Resort', area: 'Vagator', art: 'resort',
@@ -135,6 +137,7 @@ export const STAYS = [
     amen: ['Shared pool', 'Spa', 'Restaurant', 'Breakfast'],
     review: '“Amazing sunsets from the room. The restaurant is pricey.”',
     map: { x: 22, y: 28 },
+    unit: 'room', sleeps: 2, left: [4, 3],
   },
   {
     id: 's4', name: 'Fig Tree Homestay', area: 'Assagao', art: 'homestay',
@@ -143,8 +146,62 @@ export const STAYS = [
     amen: ['Garden', 'Kitchen', 'Wi-Fi', 'Home-cooked meals'],
     review: '“Quiet, green and the host is lovely. You’ll need scooters.”',
     map: { x: 72, y: 62 },
+    unit: 'house', sleeps: 6, left: [1, 1],
+  },
+  {
+    id: 's5', name: 'Palolem Beach Huts', area: 'Palolem', art: 'goa',
+    type: '3 beach huts', solo: '1 beach hut', couple: '1 beach hut for 2', pricing: 'pp', rate: 1600,
+    rating: 4.2, reviews: 980, beach: 'On Palolem Beach, South Goa',
+    amen: ['Sea view', 'Beach café', 'Hammocks', 'Fan'],
+    review: '“Waking up to the sea is worth it. Basic, but clean.”',
+    map: { x: 80, y: 86 },
+    unit: 'hut', sleeps: 2, left: [2, 2],
+  },
+  {
+    id: 's6', name: 'Fontainhas Heritage Home', area: 'Panjim', art: 'fontainhas',
+    type: 'Portuguese house · 3 rooms', pricing: 'flat', rate: 10800,
+    rating: 4.5, reviews: 342, beach: '20 min to Miramar Beach',
+    amen: ['Heritage house', 'Breakfast', 'Wi-Fi', 'AC', 'Walk to cafés'],
+    review: '“Like living in an old Goan home. Great food all around.”',
+    map: { x: 66, y: 76 },
+    unit: 'house', sleeps: 6, left: [1, 1],
+  },
+  {
+    id: 's7', name: 'Lagoon Cottages', area: 'Cola, South Goa', art: 'cola',
+    type: '3 cottages', solo: '1 cottage', couple: '1 cottage for 2', pricing: 'pp', rate: 2600,
+    rating: 4.6, reviews: 455, beach: 'Lagoon and beach, 2h from Anjuna',
+    amen: ['Lagoon', 'Kayaks', 'Restaurant', 'Breakfast'],
+    review: '“So peaceful. Far from everything, which is the point.”',
+    map: { x: 88, y: 70 },
+    unit: 'cottage', sleeps: 2, left: [3, 0],
+  },
+  {
+    id: 's8', name: 'Anjuna Shack Rooms', area: 'Anjuna', art: 'beach',
+    type: '3 sea-facing rooms', solo: '1 sea-facing room', couple: '1 sea-facing room for 2', pricing: 'pp', rate: 2100,
+    rating: 4.1, reviews: 1630, beach: 'On Anjuna Beach',
+    amen: ['Sea view', 'Beach shack', 'Music nights'],
+    review: '“Right on the sand. Loud on weekends.”',
+    map: { x: 36, y: 44 },
+    unit: 'room', sleeps: 2, left: [0, 0], nextFree: '4–6 Dec',
   },
 ]
+
+// Availability on the decided dates (Fri 27 and Sat 28 Nov) for who's going.
+export const NIGHT_LABELS = ['Fri 27', 'Sat 28']
+export function stayAvail(x, people) {
+  const need = Math.ceil(people / x.sleeps)
+  const nights = x.left.map((l) => l >= need)
+  const units = (n) => n + ' ' + x.unit + (n === 1 ? '' : 's')
+  const min = Math.min(...x.left)
+  if (x.left.every((l) => l === 0)) return { ok: false, nights, kind: 'sold', text: 'Sold out on 27–29 Nov', sub: x.nextFree ? 'Free again ' + x.nextFree : '' }
+  if (nights.every(Boolean)) {
+    if (x.pricing === 'flat') return { ok: true, nights, kind: 'free', text: 'Free both nights', sub: 'Whole ' + x.unit + ', just for you' }
+    const few = min - need <= 1
+    return { ok: true, nights, kind: few ? 'few' : 'free', text: few ? 'Only ' + units(min) + ' left' : 'Free both nights', sub: few ? 'you need ' + need : units(min) + ' left' }
+  }
+  if (nights.some(Boolean)) return { ok: false, nights, kind: 'part', text: NIGHT_LABELS[nights.indexOf(false)] + ' is full', sub: 'Free only one of 2 nights' }
+  return { ok: false, nights, kind: 'short', text: 'Only ' + units(min) + ' left', sub: `Not enough for ${people}` }
+}
 
 // Room description for who's going.
 export const stayType = (x, mode) => (mode !== 'group' && x[mode]) || x.type

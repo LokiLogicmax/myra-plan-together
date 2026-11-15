@@ -1,4 +1,4 @@
-import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, STAY_WHY, inr, stayPerPerson, stayType } from '../data.js'
+import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, STAY_WHY, NIGHT_LABELS, inr, stayPerPerson, stayType, stayAvail } from '../data.js'
 import { Compass, MapPin, CalendarBlank, UsersThree, MapTrifold, Train, Bed, CaretDown, Lock } from '@phosphor-icons/react'
 import { Scene, ModeIcon } from '../art.jsx'
 import { Planner } from './Chrome.jsx'
@@ -192,12 +192,38 @@ function StayStage(ctx, toStage) {
   const { s, set, stays, toast, people, group, stayPick, mode, go } = ctx
   const toggle = (id) => {
     const has = s.shortStay.includes(id)
+    const a = stayAvail(stays.find((x) => x.id === id), people)
+    if (!has && !a.ok) return toast(stays.find((x) => x.id === id).name + ': ' + a.text.toLowerCase() + '. Pick another stay.')
     if (!group) return set({ shortStay: has ? [] : [id] })
     if (!has && s.shortStay.length >= 3) return toast('You can send up to 3 options. Remove one first.')
     set({ shortStay: has ? s.shortStay.filter((x) => x !== id) : [...s.shortStay, id] })
   }
   const n = s.shortStay.length
   const detail = stays.find((x) => x.id === s.detail)
+  const avail = Object.fromEntries(stays.map((x) => [x.id, stayAvail(x, people)]))
+  const open = stays.filter((x) => avail[x.id].ok)
+  const closed = stays.filter((x) => !avail[x.id].ok)
+  const forWho = group ? people + ' people' : people === 1 ? 'one' : 'two'
+  const card = (x) => {
+    const on = s.shortStay.includes(x.id)
+    const a = avail[x.id]
+    return (
+      <div key={x.id} className={'stay-card' + (on ? ' on' : '') + (a.ok ? '' : ' off')}>
+        <button className="sc-open" onClick={() => set({ detail: x.id, thread: [] })} aria-label={'Open ' + x.name}>
+          <div className="img"><Scene kind={x.art} label={x.name} />{x.id === stayPick && <span className="pick">★ Myra’s pick</span>}</div>
+          <div className="sc-body">
+            <b>{x.name}</b>
+            <span className="area">{x.area} · {stayType(x, mode)}</span>
+            <span className="rating-sm"><span className="score">{x.rating}</span> {x.reviews.toLocaleString('en-IN')} ratings</span>
+            <span className="loc">{x.beach}</span>
+            <Avail a={a} />
+            {a.ok && <span className="sc-price"><b>{inr(stayPerPerson(x, people))}</b> <small>per person</small></span>}
+          </div>
+        </button>
+        {a.ok && <button className={'box' + (on ? ' on' : '')} onClick={() => toggle(x.id)} aria-pressed={on} aria-label={group ? (on ? 'Remove ' : 'Add ') + x.name + ' to the vote' : (on ? 'Unchoose ' : 'Choose ') + x.name}>{on ? '✓' : '+'}</button>}
+      </div>
+    )
+  }
 
   if (detail) {
     const on = s.shortStay.includes(detail.id)
@@ -219,14 +245,17 @@ function StayStage(ctx, toStage) {
             </div>
             <div className="d-price card">
               <small>{group ? 'Per person, 2 nights, if 6 go' : people === 1 ? 'For you, 2 nights' : 'Per person, 2 nights, for two'}</small>
-              <b className="price">{inr(stayPerPerson(detail, people))}</b>
-              <span className="seats">✓ Free on 27–29 Nov · checked {liveTime()}</span>
+              {avail[detail.id].ok && <b className="price">{inr(stayPerPerson(detail, people))}</b>}
+              <Avail a={avail[detail.id]} />
+              <span className="checked">Checked for 27–29 Nov at {liveTime()}</span>
               <span className="free-cancel">Free cancellation till 24 Nov</span>
             </div>
           </div>
         </div>
       ),
-      actions: (
+      actions: !avail[detail.id].ok ? (
+        <button className="cta" onClick={() => set({ detail: null, thread: [] })}>See stays that are free</button>
+      ) : (
         <button className={'cta' + (on ? ' ghost' : '')} onClick={() => toggle(detail.id)}>
           {group ? (on ? '✓ In the vote · remove' : '+ Add to friends’ vote') : (on ? '✓ Chosen · undo' : 'Choose this stay')}
         </button>
@@ -243,7 +272,7 @@ function StayStage(ctx, toStage) {
 
   return {
     title: 'Where do you stay?',
-    sub: group ? 'Free on 27–29 Nov for 6 people. Prices are per person for 2 nights. Shortlist up to 3 for the vote.' : `Free on 27–29 Nov for ${people === 1 ? 'one' : 'two'}. Prices are per person for 2 nights. Choose one.`,
+    sub: `${stays.length} stays checked for Fri 27 – Sun 29 Nov · ${open.length} free for ${forWho}. Prices are per person for 2 nights. ` + (group ? 'Shortlist up to 3 for the vote.' : 'Choose one.'),
     back: { label: 'Transport', onClick: () => toStage('transport') },
     body: s.loading ? <Skeletons n={4} /> : (
       <>
@@ -252,26 +281,13 @@ function StayStage(ctx, toStage) {
           <button role="tab" aria-selected={s.stayView === 'map'} className={s.stayView === 'map' ? 'on' : ''} onClick={() => set({ stayView: 'map' })}>Map</button>
         </div>
         {s.stayView === 'map' && <StayMap ctx={ctx} />}
-        <div className="stay-grid">
-          {stays.map((x) => {
-            const on = s.shortStay.includes(x.id)
-            return (
-              <div key={x.id} className={'stay-card' + (on ? ' on' : '')}>
-                <button className="sc-open" onClick={() => set({ detail: x.id, thread: [] })} aria-label={'Open ' + x.name}>
-                  <div className="img"><Scene kind={x.art} label={x.name} />{x.id === stayPick && <span className="pick">★ Myra’s pick</span>}</div>
-                  <div className="sc-body">
-                    <b>{x.name}</b>
-                    <span className="area">{x.area} · {stayType(x, mode)}</span>
-                    <span className="rating-sm"><span className="score">{x.rating}</span> {x.reviews.toLocaleString('en-IN')} ratings</span>
-                    <span className="loc">{x.beach}</span>
-                    <span className="sc-price"><b>{inr(stayPerPerson(x, people))}</b> <small>per person</small></span>
-                  </div>
-                </button>
-                <button className={'box' + (on ? ' on' : '')} onClick={() => toggle(x.id)} aria-pressed={on} aria-label={group ? (on ? 'Remove ' : 'Add ') + x.name + ' to the vote' : (on ? 'Unchoose ' : 'Choose ') + x.name}>{on ? '✓' : '+'}</button>
-              </div>
-            )
-          })}
-        </div>
+        <div className="stay-grid">{open.map(card)}</div>
+        {closed.length > 0 && (
+          <>
+            <p className="cg-more stay-closed">Not free for {forWho} on 27–29 Nov</p>
+            <div className="stay-grid">{closed.map(card)}</div>
+          </>
+        )}
       </>
     ),
     actions: (
@@ -293,6 +309,7 @@ function StayStage(ctx, toStage) {
           ? { label: 'Add Myra’s picks', onClick: () => { set({ shortStay: ['s1', 's4'] }); ctx.say('Add Myra’s picks', 'Added Casa Azul and Fig Tree. A pool villa against a cheaper homestay: an easy vote.') } }
           : { label: 'Choose Myra’s pick', onClick: () => { set({ shortStay: [stayPick] }); ctx.say('Choose Myra’s pick', 'Chosen. I’ll re-check it is still free right before you pay.') } },
         { label: 'Show me on a map', onClick: () => set({ stayView: 'map' }) },
+        { label: 'Why are some not free?', answer: closed.map((x) => `${x.name}: ${avail[x.id].text.toLowerCase()}${avail[x.id].sub ? ' (' + avail[x.id].sub.toLowerCase() + ')' : ''}.`).join(' ') + ' I only let you pick stays that are free both nights.' },
         { label: 'Anything cheaper?', answer: group ? 'Lazy Gecko Hostel is the cheapest at ₹1,900 each for 2 nights, 400 m from the beach. It’s a shared 6-bed room, though.' : 'Lazy Gecko Hostel is the cheapest at ₹1,900 each for 2 nights, 400 m from the beach.' },
       ],
     },
@@ -302,7 +319,7 @@ function StayStage(ctx, toStage) {
 function StayMap({ ctx }) {
   const { stays, set, people } = ctx
   return (
-    <div className="map card" aria-label="Map of North Goa">
+    <div className="map card" aria-label="Map of Goa">
       <svg viewBox="0 0 100 70" preserveAspectRatio="none" aria-hidden="true">
         <rect width="100" height="70" fill="#E8F1E4" />
         <path d="M0 0 L18 0 Q10 20 16 35 Q8 50 14 70 L0 70Z" fill="#B9DDF0" />
@@ -312,12 +329,24 @@ function StayMap({ ctx }) {
       <span className="map-lbl" style={{ left: '3%', top: '18%' }}>Arabian Sea</span>
       <span className="map-lbl" style={{ left: '20%', top: '60%' }}>Anjuna</span>
       <span className="map-lbl" style={{ left: '62%', top: '25%' }}>Assagao</span>
+      <span className="map-lbl" style={{ left: '56%', top: '82%' }}>Panjim</span>
+      <span className="map-lbl" style={{ left: '78%', top: '93%' }}>South Goa ↓</span>
       {stays.map((x) => (
-        <button key={x.id} className={'pin' + (x.id === ctx.stayPick ? ' pick' : '')} style={{ left: x.map.x + '%', top: x.map.y + '%' }} onClick={() => set({ detail: x.id, thread: [] })}>
-          {inr(stayPerPerson(x, people))}
+        <button key={x.id} className={'pin' + (x.id === ctx.stayPick ? ' pick' : '') + (stayAvail(x, people).ok ? '' : ' off')} style={{ left: x.map.x + '%', top: x.map.y + '%' }} onClick={() => set({ detail: x.id, thread: [] })}>
+          {stayAvail(x, people).ok ? inr(stayPerPerson(x, people)) : 'Full'}
         </button>
       ))}
     </div>
+  )
+}
+
+// Night-by-night availability on the decided dates.
+function Avail({ a }) {
+  return (
+    <span className={'avail ' + a.kind}>
+      <span className="nights">{NIGHT_LABELS.map((d, i) => <i key={d} className={a.nights[i] ? 'y' : 'n'}>{a.nights[i] ? '✓' : '✕'} {d}</i>)}</span>
+      <span className="av-text"><b>{a.text}</b>{a.sub && <small> · {a.sub}</small>}</span>
+    </span>
   )
 }
 

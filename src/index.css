@@ -968,3 +968,24 @@ button.tfield:focus-visible { outline: 2px solid var(--blue); outline-offset: -2
   .cg-hero { height: 170px; }
   .city-card { display: grid; grid-template-columns: none; }
 }
+
+/* Stay availability on the decided dates */
+.avail { display: grid; gap: 4px; margin-top: 6px; padding-top: 7px; border-top: 1px dashed var(--line); }
+.avail .nights { display: flex; gap: 4px; }
+.avail .nights i { font-style: normal; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 6px; }
+.avail .nights i.y { background: #DDF3E6; color: #17784A; }
+.avail .nights i.n { background: #FDE4E1; color: #B42318; }
+.av-text { font-size: 12px; line-height: 1.35; }
+.av-text b { font-weight: 800; }
+.av-text small { color: var(--muted); font-size: 11.5px; }
+.avail.free .av-text b { color: #17784A; }
+.avail.few .av-text b { color: #C2410C; }
+.avail.part .av-text b, .avail.short .av-text b, .avail.sold .av-text b { color: #B42318; }
+.stay-card.off { box-shadow: 0 0 0 1px var(--line); }
+.stay-card.off:hover { transform: none; }
+.stay-card.off .img { filter: grayscale(.85); opacity: .7; }
+.stay-card.off .sc-body > b, .stay-card.off .area, .stay-card.off .loc, .stay-card.off .rating-sm { opacity: .6; }
+.stay-closed { margin: 22px 0 10px; }
+.d-price .avail { border-top: 0; padding-top: 0; margin: 6px 0 2px; }
+.d-price .checked { font-size: 11.5px; color: var(--muted); }
+.pin.off { background: #EEF0F3; color: #8A92A0; box-shadow: none; }
