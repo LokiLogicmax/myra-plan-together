@@ -840,3 +840,14 @@ body { background: #F7F8FC; }
   .brand-lockup .with { font-size: 10.5px; margin-left: 37px; }
   .brand-lockup .with .myra-mark { font-size: 16px !important; }
 }
+/* Trip cards tuck behind the details bar */
+.fan { position: relative; z-index: 1; margin-bottom: 0; }
+.basics-bar { position: relative; z-index: 5; margin-top: -46px; }
+@container device (max-width: 760px) { .basics-bar { margin-top: -34px; } }
+.basics-bar { margin-top: -30px; }
+.fan-label { padding-bottom: calc(var(--y, 0px) + 38px); }
+.fan-card:hover .fan-label, .fan-card.on .fan-label { padding-bottom: 38px; }
+@container device (max-width: 760px) {
+  .basics-bar { margin-top: -24px; }
+  .fan-label, .fan-card.on .fan-label { padding-bottom: 32px; }
+}
