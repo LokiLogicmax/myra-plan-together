@@ -827,3 +827,16 @@ body { background: #F7F8FC; }
   .hero-orb.behind .orb { --s: 142px !important; }
   .brand-lockup { padding: 44px 0 50px; }
 }
+/* Orb + lockup scaled down together (~85%) */
+.hero-orb.behind .orb { --s: 188px !important; }
+.brand-lockup { padding: 60px 0 66px; }
+.brand-lockup .start-logo img { height: 41px; }
+.brand-lockup .with { font-size: 14px; margin-left: 55px; }
+.brand-lockup .with .myra-mark { font-size: 23px !important; }
+@container device (max-width: 760px) {
+  .hero-orb.behind .orb { --s: 120px !important; }
+  .brand-lockup { padding: 37px 0 43px; }
+  .brand-lockup .start-logo img { height: 27px; }
+  .brand-lockup .with { font-size: 10.5px; margin-left: 37px; }
+  .brand-lockup .with .myra-mark { font-size: 16px !important; }
+}
