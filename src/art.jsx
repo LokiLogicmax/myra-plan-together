@@ -172,15 +172,15 @@ export function Icon({ name, size = 40 }) {
   }
 }
 
-// Myra's orb: a living, slowly swirling sphere. States: idle, think (faster), listen (pulses with voice).
+// Myra's orb: a pearly, iridescent bubble that breathes and slowly changes shape.
+// States: idle, think (quicker), listen (bigger breaths, like a voice).
 export function MyraOrb({ size = 36, pulse = false, state }) {
   const st = state || (pulse ? 'think' : 'idle')
   return (
-    <span className={'orb orb-' + st} style={{ '--s': size + 'px' }} aria-hidden="true">
-      <i className="orb-swirl" />
-      <i className="orb-blob a" />
-      <i className="orb-blob b" />
-      <i className="orb-core" />
+    <span className={'orb orb-' + st + (size < 40 ? ' orb-sm' : '')} style={{ '--s': size + 'px' }} aria-hidden="true">
+      <i className="orb-rim" />
+      <i className="orb-rim two" />
+      <i className="orb-pearl" />
       <i className="orb-gloss" />
     </span>
   )

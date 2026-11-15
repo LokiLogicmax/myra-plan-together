@@ -486,31 +486,47 @@ body { background: #F7F8FC; }
 .concept-pill { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); border: 1px solid #DADDE3; border-radius: 10px; padding: 2px 7px; margin-left: -12px; }
 .hdr-login { border-radius: 10px; }
 
-/* The orb */
-.orb { --s: 36px; width: var(--s); height: var(--s); position: relative; display: inline-block; flex: none; border-radius: 50%; overflow: hidden; isolation: isolate; background: #0B1B4D;
-  box-shadow: inset 0 0 calc(var(--s) * .2) rgba(255, 255, 255, .35), 0 calc(var(--s) * .14) calc(var(--s) * .5) calc(var(--s) * -.12) rgba(49, 103, 211, .6), 0 0 calc(var(--s) * .7) rgba(235, 32, 38, .14);
-  animation: orb-breathe 4.2s ease-in-out infinite; transform: translateZ(0); }
-.orb i { position: absolute; display: block; border-radius: 50%; }
-.orb-swirl { inset: -28%; background: conic-gradient(from 0deg, #59BAFF, #3167D3, #834CC5, #EB2026, #FF9F6B, #59BAFF); filter: blur(calc(var(--s) * .14)); animation: orb-spin 7s linear infinite; }
-.orb-blob { mix-blend-mode: screen; filter: blur(calc(var(--s) * .06)); }
-.orb-blob.a { width: 72%; height: 72%; left: -8%; top: 2%; background: radial-gradient(circle, rgba(120, 205, 255, .95), rgba(89, 186, 255, 0) 70%); animation: orb-float-a 5.2s ease-in-out infinite; }
-.orb-blob.b { width: 66%; height: 66%; right: -12%; bottom: -8%; background: radial-gradient(circle, rgba(255, 70, 80, .85), rgba(235, 32, 38, 0) 70%); animation: orb-float-b 6.4s ease-in-out infinite; }
-.orb-core { inset: 20%; background: radial-gradient(circle at 50% 58%, rgba(1, 9, 22, .5), rgba(1, 9, 22, 0) 70%); animation: orb-spin 10s linear infinite reverse; }
-.orb-gloss { inset: 0; background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, .9) 0, rgba(255, 255, 255, .28) 16%, rgba(255, 255, 255, 0) 38%), radial-gradient(circle at 72% 86%, rgba(255, 255, 255, .2), transparent 42%); }
-.orb-think { animation-duration: 1.4s; }
-.orb-think .orb-swirl { animation-duration: 2s; }
-.orb-listen { animation: orb-listen 1s ease-in-out infinite; }
-.orb-listen .orb-swirl { animation-duration: 1.6s; }
-.orb-listen .orb-blob.b { animation-duration: 1.8s; }
+/* The orb: pearl centre, iridescent rim, irregular breathing outline */
+.orb { --s: 36px; width: var(--s); height: var(--s); position: relative; display: inline-block; flex: none; overflow: hidden; isolation: isolate;
+  border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%;
+  background: #FBF4F7;
+  box-shadow:
+    calc(var(--s) * -.12) 0 calc(var(--s) * .42) rgba(120, 165, 235, .38),
+    calc(var(--s) * .12) calc(var(--s) * .04) calc(var(--s) * .42) rgba(240, 140, 170, .32),
+    0 calc(var(--s) * .1) calc(var(--s) * .3) calc(var(--s) * -.1) rgba(150, 120, 190, .35);
+  animation: orb-morph 7s ease-in-out infinite, orb-breathe 4.8s ease-in-out infinite;
+  transform: translateZ(0); will-change: transform, border-radius; }
+.orb i { position: absolute; display: block; border-radius: inherit; }
+.orb-rim { inset: -12%; border-radius: 50% !important;
+  background: conic-gradient(from 210deg, #F59AB2, #8DB2EE, #B7C4F5, #F3B4C6, #E6B5F2, #FFC49A, #F7D9A8, #F59AB2);
+  filter: blur(calc(var(--s) * .05)); animation: orb-spin 11s linear infinite; }
+.orb-rim.two { inset: -6%; opacity: .55; mix-blend-mode: multiply; transform-origin: 46% 54%;
+  background: conic-gradient(from 20deg, transparent 0 30%, #9DB8F2 38%, transparent 46% 62%, #FFB08F 70%, #E7A6E8 76%, transparent 84%);
+  animation: orb-spin 8s linear infinite reverse, orb-drift 6s ease-in-out infinite; }
+.orb-pearl { inset: 0; background: radial-gradient(ellipse 58% 56% at 52% 54%, #fff 0%, #fff 40%, rgba(255, 252, 254, .92) 55%, rgba(255, 245, 250, .35) 74%, rgba(255, 240, 248, 0) 88%);
+  animation: orb-pearl 5.5s ease-in-out infinite; }
+.orb-sm .orb-pearl { background: radial-gradient(ellipse 46% 44% at 52% 54%, #fff 0%, #fff 28%, rgba(255, 252, 254, .8) 48%, rgba(255, 245, 250, 0) 76%); }
+.orb-sm .orb-rim.two { opacity: .75; }
+.orb-gloss { inset: 0; background: radial-gradient(circle at 34% 24%, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 32%); mix-blend-mode: screen; }
+.orb-think { animation-duration: 3s, 2s; }
+.orb-think .orb-rim { animation-duration: 3.5s; }
+.orb-listen { animation: orb-morph 2.4s ease-in-out infinite, orb-talk 1s ease-in-out infinite; }
+.orb-listen .orb-rim { animation-duration: 3s; }
 @keyframes orb-spin { to { transform: rotate(360deg); } }
-@keyframes orb-breathe { 50% { transform: scale(1.045); } }
-@keyframes orb-float-a { 50% { transform: translate(22%, 18%) scale(1.1); } }
-@keyframes orb-float-b { 50% { transform: translate(-20%, -14%) scale(.92); } }
-@keyframes orb-listen { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.1); } 60% { transform: scale(.97); } }
-.hero-orb { display: flex; justify-content: center; margin-bottom: 14px; }
-.hero-orb .orb { box-shadow: inset 0 0 14px rgba(255,255,255,.35), 0 18px 40px -10px rgba(49, 103, 211, .55), 0 0 60px rgba(235, 32, 38, .18); }
-.nav-orb .orb, .myra-tab .orb { transition: transform .2s; }
-.nav-orb:hover .orb, .myra-tab:hover .orb { transform: scale(1.08); }
+@keyframes orb-breathe { 0%, 100% { transform: scale(.97); } 50% { transform: scale(1.05); } }
+@keyframes orb-talk { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.09, 1.04); } 55% { transform: scale(.98, 1.06); } 80% { transform: scale(1.05, .99); } }
+@keyframes orb-morph {
+  0%, 100% { border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%; }
+  25% { border-radius: 45% 55% 48% 52% / 55% 46% 54% 45%; }
+  50% { border-radius: 55% 45% 44% 56% / 47% 53% 47% 53%; }
+  75% { border-radius: 48% 52% 57% 43% / 52% 45% 55% 48%; }
+}
+@keyframes orb-drift { 50% { translate: 4% -3%; } }
+@keyframes orb-pearl { 50% { transform: translate(-3%, 2%) scale(1.04); } }
+.hero-orb { display: flex; justify-content: center; margin-bottom: 18px; }
+.nav-orb .orb, .myra-tab .orb { transition: scale .2s; }
+.nav-orb:hover .orb, .myra-tab:hover .orb { scale: 1.08; }
+@media (prefers-reduced-motion: reduce) { .orb, .orb i { animation: none !important; } }
 
 /* Myra wordmark */
 .myra-mark { position: relative; display: inline-block; font-family: 'Yellowtail', cursive; line-height: 1; padding: 0 .5em .08em .02em; background: linear-gradient(100deg, #16477F 0%, #3167D3 55%, #59BAFF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
