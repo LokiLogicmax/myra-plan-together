@@ -33,7 +33,6 @@ export function Start({ ctx }) {
     if (/beach|sea|chill|goa/.test(t)) patch.exp = 'beach'
     else if (/mountain|hill|trek|snow/.test(t)) patch.exp = 'hills'
     else if (/party|club|night/.test(t)) patch.exp = 'party'
-    else if (/heritage|food|history|old/.test(t)) patch.exp = 'heritage'
     else if (/quiet|calm|peace|nature/.test(t)) patch.exp = 'quiet'
     else if (/romantic|honeymoon|anniversary|couple|partner/.test(t)) patch.exp = 'romantic'
     else if (/adventure|raft|camp|bungee|paraglid/.test(t)) patch.exp = 'adventure'
@@ -71,7 +70,7 @@ export function Start({ ctx }) {
             role="radio"
             aria-checked={b.exp === e.id}
             className={'fan-card' + (b.exp === e.id ? ' on' : '')}
-            style={{ '--r': `${(i - 3) * 3.5}deg`, '--y': `${Math.abs(i - 3) * 7}px` }}
+            style={{ '--r': `${(i - 2.5) * 3.5}deg`, '--y': `${Math.abs(i - 2.5) * 7}px` }}
             onClick={() => setB({ exp: e.id })}
           >
             <Scene kind={e.art} label={e.label} />

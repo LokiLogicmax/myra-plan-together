@@ -17,7 +17,6 @@ export const EXPERIENCES = [
   { id: 'beach', label: 'Beaches & chill', sub: 'Sun, sea, slow days', art: 'beach' },
   { id: 'hills', label: 'Mountains & treks', sub: 'Cool air, long walks', art: 'hills' },
   { id: 'party', label: 'Nightlife', sub: 'Clubs, live music', art: 'party' },
-  { id: 'heritage', label: 'Heritage & food', sub: 'Old towns, local food', art: 'heritage' },
   { id: 'quiet', label: 'Quiet escape', sub: 'Nature, no crowds', art: 'quiet' },
   { id: 'romantic', label: 'Romantic getaway', sub: 'Lakes, sunsets, slow dinners', art: 'romantic' },
   { id: 'adventure', label: 'Adventure', sub: 'Rafting, camps, treks', art: 'adventure' },
