@@ -42,7 +42,7 @@ export function Start({ ctx }) {
       <button className="start-close" onClick={() => go('home')} aria-label="Close">✕</button>
       <div className="start-head">
         <div className="hero-orb"><MyraOrb size={72} /></div>
-        <h1>Make my trip</h1>
+        <h1 className="start-logo"><img src="/brand/mmt-logo.svg" alt="MakeMyTrip" /></h1>
         <p className="with">with <MyraMark size={40} /></p>
         <p className="start-q">What kind of trip are you in the mood for?</p>
       </div>
