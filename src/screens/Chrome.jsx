@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Logo, MyraOrb, MyraMark } from '../art.jsx'
-import { HOST, FRIENDS } from '../data.js'
+import { HOST, FRIENDS, EXPERIENCES, PARTY } from '../data.js'
+import { Compass, MapTrifold, Train, Bed, ShareNetwork, UsersThree, CreditCard, PaperPlaneTilt, Check } from '@phosphor-icons/react'
 import { PHOTOS } from '../photos.js'
 
 export function Header({ ctx }) {
@@ -116,7 +117,7 @@ export function Planner({ ctx, steps, current, chips, capsule, title, sub, back,
       </div>
 
       <aside className="pl-rail">
-        <Tracker steps={steps} current={current} />
+        <Tracker ctx={ctx} steps={steps} current={current} />
         <MyraCard ctx={ctx} myra={myra} />
       </aside>
 
@@ -134,17 +135,51 @@ export function Planner({ ctx, steps, current, chips, capsule, title, sub, back,
   )
 }
 
-export function Tracker({ steps, current }) {
+const STEP_ICON = {
+  'Trip basics': Compass, City: MapTrifold, Transport: Train, Stay: Bed,
+  'Share with friends': ShareNetwork, 'Friends vote': UsersThree, 'Review & book': CreditCard, 'Send your picks': PaperPlaneTilt,
+}
+
+// One line on what's decided (or what's next) for each step.
+function stepDetail(st, ctx) {
+  const { s, group } = ctx
+  const friend = s.view === 'friend'
+  const count = (list, picked) => (!list.length ? null : group ? list.length + ' in the vote' : picked)
+  const exp = EXPERIENCES.find((e) => e.id === s.basics.exp)
+  const tPicked = ctx.allTransport?.find((t) => t.id === s.shortTransport[0])?.title.split(' · ')[0]
+  const sPicked = ctx.stays?.find((x) => x.id === s.shortStay[0])?.name
+  if (friend) {
+    if (st === 'Transport') return s.friend.votes.transport ? 'You’ve picked' : 'Pick one of ' + s.shortTransport.length
+    if (st === 'Stay') return s.friend.votes.stay ? 'You’ve picked' : 'Pick one of ' + s.shortStay.length
+    if (st === 'Send your picks') return s.friend.sent ? 'Sent to Aarav' : 'One tap'
+  }
+  return {
+    'Trip basics': exp ? exp.label + ' · ' + (PARTY[s.basics.people]?.label || '') : 'Kind of trip, who, when',
+    City: ctx.city ? ctx.city.name + ' · ' + ctx.city.tag : 'Pick from 3',
+    Transport: count(s.shortTransport, tPicked) || (group ? 'Shortlist up to 3' : 'Choose one'),
+    Stay: count(s.shortStay, sPicked) || (group ? 'Shortlist up to 3' : 'Choose one'),
+    'Share with friends': s.shared ? 'Link shared' : 'One link, no login',
+    'Friends vote': 'Closes Wed 25 Nov, 9 pm',
+    'Review & book': group ? 'Pay once everyone agrees' : 'Check and pay',
+  }[st] || ''
+}
+
+export function Tracker({ ctx, steps, current }) {
   return (
-    <div className="tracker card">
+    <div className="tracker">
       <span className="rail-label">Steps</span>
       <ol>
-        {steps.map((st, i) => (
-          <li key={st} className={i < current ? 'done' : i === current ? 'now' : ''}>
-            <span className="dot">{i < current ? '✓' : i + 1}</span>
-            <span>{st}</span>
-          </li>
-        ))}
+        {steps.map((st, i) => {
+          const Ico = STEP_ICON[st] || Compass
+          const state = i < current ? 'done' : i === current ? 'now' : 'next'
+          return (
+            <li key={st} className={'tcard ' + state} aria-current={state === 'now' ? 'step' : undefined}>
+              <span className="tc-ico"><Ico size={20} weight={state === 'next' ? 'regular' : 'fill'} /></span>
+              <span className="tc-text"><b>{st}</b><small>{stepDetail(st, ctx)}</small></span>
+              <span className="tc-meta">{state === 'done' ? <><Check size={13} weight="bold" /> Done</> : state === 'now' ? 'Now' : 'Step ' + (i + 1)}</span>
+            </li>
+          )
+        })}
       </ol>
     </div>
   )
