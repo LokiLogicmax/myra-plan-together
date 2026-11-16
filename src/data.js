@@ -1,6 +1,6 @@
 // Sample data for the concept prototype. Prices, seats and reviews are made up.
 
-export const HOST = { id: 'host', name: 'Aarav', short: 'A', color: '#008CFF' }
+export const HOST = { id: 'host', name: 'Anurag', short: 'A', color: '#008CFF' }
 
 export const FRIENDS = [
   { id: 'riya', name: 'Riya', color: '#E8705A' },

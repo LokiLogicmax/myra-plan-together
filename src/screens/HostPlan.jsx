@@ -377,7 +377,7 @@ function ShareStage(ctx, toStage) {
             <p contentEditable suppressContentEditableWarning>{msg}</p>
             <div className="link-card">
               <Scene kind="beach" label="Goa" />
-              <span><b>Plan Goa with Aarav</b><small>makemytrip.com/myra/t/GOA-7K2</small></span>
+              <span><b>Plan Goa with Anurag</b><small>makemytrip.com/myra/t/GOA-7K2</small></span>
             </div>
           </div>
           <div className="share-btns">

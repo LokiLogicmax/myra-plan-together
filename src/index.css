@@ -1009,3 +1009,13 @@ button.tfield:focus-visible { outline: 2px solid var(--blue); outline-offset: -2
 .tracker .tcard.next { background: rgba(255, 255, 255, .6); box-shadow: 0 0 0 1px rgba(16, 24, 40, .05); }
 .tracker .tcard.next .tc-ico { background: #F1F2F5; color: #9AA1AC; }
 .tracker .tcard.next .tc-text b { color: #6B7280; font-weight: 800; }
+
+/* Safari: overflow:hidden + border-radius doesn't clip animated, blurred or blended children
+   (the orb showed as a square, the phone frame leaked past its corners). A mask forces the clip. */
+.orb, .stage-wrap.framed .device { -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black); }
+.tracker li { display: block; padding: 0; }
+.tracker button.tcard { width: 100%; text-align: left; font: inherit; color: inherit; border: 0; cursor: pointer; }
+.tracker button.tcard:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px #CFE2FA, 0 14px 28px -16px rgba(16, 24, 40, .35); }
+.tracker button.tcard:hover .tc-check { box-shadow: 0 0 0 4px #E3EEFF; }
+.tracker button.tcard:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.tracker .tc-check { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--blue); color: #fff; flex: none; transition: box-shadow .2s; }

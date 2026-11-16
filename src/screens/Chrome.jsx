@@ -24,7 +24,7 @@ export function Header({ ctx }) {
           ? <span className="hdr-user"><Avatar who="meera" /> <span className="hide-sm">Meera</span></span>
           : s.view === 'home'
             ? <button className="hdr-login"><span className="login-dot">my</span> <span className="hide-sm">Login or Create Account</span><span className="show-sm">Login</span></button>
-            : <span className="hdr-user"><Avatar who="host" /> <span className="hide-sm">Hi, Aarav</span></span>}
+            : <span className="hdr-user"><Avatar who="host" /> <span className="hide-sm">Hi, Anurag</span></span>}
       </div>
     </header>
   )
@@ -151,7 +151,7 @@ function stepDetail(st, ctx) {
   if (friend) {
     if (st === 'Transport') return s.friend.votes.transport ? 'You’ve picked' : 'Pick one of ' + s.shortTransport.length
     if (st === 'Stay') return s.friend.votes.stay ? 'You’ve picked' : 'Pick one of ' + s.shortStay.length
-    if (st === 'Send your picks') return s.friend.sent ? 'Sent to Aarav' : 'One tap'
+    if (st === 'Send your picks') return s.friend.sent ? 'Sent to Anurag' : 'One tap'
   }
   return {
     'Trip basics': exp ? exp.label + ' · ' + (PARTY[s.basics.people]?.label || '') : 'Kind of trip, who, when',
@@ -164,6 +164,20 @@ function stepDetail(st, ctx) {
   }[st] || ''
 }
 
+// Where tapping a finished step takes you back to.
+function stepBack(st, ctx) {
+  const { s, go } = ctx
+  if (s.view === 'friend') {
+    const stage = { Transport: 'transport', Stay: 'stay' }[st]
+    return stage && (() => go('friend', { friend: { ...s.friend, stage } }))
+  }
+  if (st === 'Trip basics') return () => go('start')
+  const stage = { City: 'city', Transport: 'transport', Stay: 'stay', 'Share with friends': 'share' }[st]
+  if (stage) return () => go('plan', { stage, loading: null })
+  if (st === 'Friends vote') return () => go('review')
+  return null
+}
+
 export function Tracker({ ctx, steps, current }) {
   return (
     <div className="tracker">
@@ -172,11 +186,21 @@ export function Tracker({ ctx, steps, current }) {
         {steps.map((st, i) => {
           const Ico = STEP_ICON[st] || Compass
           const state = i < current ? 'done' : i === current ? 'now' : 'next'
-          return (
-            <li key={st} className={'tcard ' + state} aria-current={state === 'now' ? 'step' : undefined}>
+          const back = state === 'done' && stepBack(st, ctx)
+          const inner = (
+            <>
               <span className="tc-ico"><Ico size={20} weight={state === 'next' ? 'regular' : 'fill'} /></span>
               <span className="tc-text"><b>{st}</b><small>{stepDetail(st, ctx)}</small></span>
-              <span className="tc-meta">{state === 'done' ? <><Check size={13} weight="bold" /> Done</> : state === 'now' ? 'Now' : 'Step ' + (i + 1)}</span>
+              {state === 'done'
+                ? <span className="tc-check" aria-label="Done"><Check size={13} weight="bold" /></span>
+                : <span className="tc-meta">{state === 'now' ? 'Now' : 'Step ' + (i + 1)}</span>}
+            </>
+          )
+          return (
+            <li key={st} aria-current={state === 'now' ? 'step' : undefined}>
+              {back
+                ? <button className={'tcard ' + state} onClick={back} title={'Go back to ' + st}>{inner}</button>
+                : <div className={'tcard ' + state}>{inner}</div>}
             </li>
           )
         })}
