@@ -1040,3 +1040,24 @@ button.tfield:focus-visible { outline: 2px solid var(--blue); outline-offset: -2
   .basics-bar .bf:last-child .bf-pop { right: 12px; left: 12px; }
 }
 .over-budget { margin-top: 2px; font-size: 11.5px; font-weight: 700; color: #C2410C; }
+
+/* Dropout: cost per person, 6 → 5, against the budget */
+.drop-cost { margin: 10px 0 4px; background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px #E3EAF5; overflow: hidden; font-size: 13px; }
+.dc-head, .dc-row { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 10px; padding: 9px 14px; align-items: center; }
+.dc-head { font-size: 11.5px; font-weight: 800; color: #6B7280; text-transform: uppercase; letter-spacing: .03em; background: #F6F8FC; }
+.dc-row + .dc-row, .dc-head + .dc-row { border-top: 1px solid #EEF1F6; }
+.dc-row > span { display: grid; gap: 1px; min-width: 0; }
+.dc-row small { font-size: 11.5px; color: #8A92A0; }
+.dc-row em { font-style: normal; font-size: 11.5px; font-weight: 700; color: #C2410C; }
+.dc-row small.ok { color: #17784A; font-weight: 700; }
+.dc-row small.no { color: #B42318; font-weight: 700; }
+.dc-row.over { background: #FFF7F5; }
+.drop-tip { margin: 8px 0 0; font-size: 13.5px; }
+@container device (max-width: 760px) {
+  .dc-head { display: none; }
+  .dc-row { grid-template-columns: 1fr 1fr; }
+  .dc-row > span:first-child { grid-column: 1 / -1; }
+  .dc-row > span:nth-child(2)::before { content: 'If 6'; color: #8A92A0; font-size: 11px; }
+  .dc-row > span:nth-child(3)::before { content: 'If 5'; color: #8A92A0; font-size: 11px; }
+  .dc-row > span:nth-child(4) { grid-column: 1 / -1; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }
+}
