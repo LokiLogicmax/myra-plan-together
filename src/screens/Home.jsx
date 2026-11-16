@@ -1,4 +1,5 @@
 import { Icon, MyraOrb, Scene } from '../art.jsx'
+import { Suitcase, SealPercent, Compass } from '@phosphor-icons/react'
 
 const TABS = [
   ['flight', 'Flights'], ['hotel', 'Hotels'], ['villa', 'Villas & Homestays'], ['holiday', 'Holiday Packages'],
@@ -22,7 +23,7 @@ export function Home({ ctx }) {
             </button>
             {TABS.map(([ic, label], i) => (
               <button key={label} className={'tab' + (i === 0 ? ' on' : '')}>
-                <Icon name={ic} size={38} />
+                <Icon name={ic} size={50} />
                 <span>{label}</span>
               </button>
             ))}
@@ -57,21 +58,21 @@ export function Home({ ctx }) {
       <div className="home-app">
         <div className="app-tiles">
           {[['flight', 'Flights'], ['hotel', 'Hotels'], ['train', 'Trains'], ['holiday', 'Holiday Packages']].map(([ic, l]) => (
-            <button key={l} className="tile"><Icon name={ic} size={46} /><b>{l}</b></button>
+            <button key={l} className="tile"><Icon name={ic} size={52} /><b>{l}</b></button>
           ))}
         </div>
         <MyraBanner onClick={start} compact />
         <div className="app-grid card">
           {[['cab', 'Airport Cabs'], ['villa', 'Villas & Homestays'], ['bus', 'Bus'], ['cab', 'Outstation Cabs'], ['tours', 'Tours & Attractions'], ['hotel', 'Hourly Stays'], ['forex', 'Forex Card & Currency'], ['visa', 'Visa'], ['insurance', 'Travel Insurance']].map(([ic, l]) => (
-            <span key={l}><Icon name={ic} size={36} />{l}</span>
+            <span key={l}><Icon name={ic} size={44} />{l}</span>
           ))}
         </div>
         <nav className="bottom-nav">
           <span className="on"><i className="my">my</i>Home</span>
-          <span>🧳<br />My Trips</span>
+          <span><Suitcase size={22} weight="duotone" />My Trips</span>
           <button onClick={start} className="nav-orb" aria-label="Plan with Myra"><MyraOrb size={50} /></button>
-          <span>％<br />Offers</span>
-          <span>🧭<br />Where2Go</span>
+          <span><SealPercent size={22} weight="duotone" />Offers</span>
+          <span><Compass size={22} weight="duotone" />Where2Go</span>
         </nav>
       </div>
     </>

@@ -1,26 +1,49 @@
-import { useState } from 'react'
-import { EXPERIENCES, PEOPLE, FROM, WHEN } from '../data.js'
-import { Scene, MyraOrb } from '../art.jsx'
+import { useEffect, useState } from 'react'
+import { UsersThree, MapPin, CalendarBlank, CaretDown, Check, Wallet, GenderIntersex } from '@phosphor-icons/react'
+import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY, CODES, BUDGET, GENDER } from '../data.js'
+import { Scene, MyraMark, MyraOrb } from '../art.jsx'
+import { VoiceInput } from './Chrome.jsx'
 
 export function Start({ ctx }) {
   const { s, set, go } = ctx
   const b = s.basics
   const setB = (patch) => set({ basics: { ...b, ...patch } })
-  const [text, setText] = useState('')
   const [heard, setHeard] = useState(null)
-  const [listening, setListening] = useState(false)
+  const [open, setOpen] = useState(null)
+  const toggle = (k) => setOpen((o) => (o === k ? null : k))
+  const pick = (patch) => { setB(patch); setOpen(null) }
+  const w = WHEN_BIG[b.when] || WHEN_BIG.w2
+  const bud = BUDGET.find((x) => x.id === b.budget) || BUDGET[1]
+  const gen = GENDER.find((x) => x.id === b.gender) || GENDER[0]
+  useEffect(() => {
+    if (!open) return
+    const close = (e) => { if (!e.target.closest('.bf')) setOpen(null) }
+    const esc = (e) => { if (e.key === 'Escape') setOpen(null) }
+    document.addEventListener('pointerdown', close)
+    document.addEventListener('keydown', esc)
+    return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', esc) }
+  }, [open])
 
   // Typing is optional: a simple parser fills the same choices.
   const parse = (raw) => {
     const t = raw.toLowerCase()
     const patch = {}
-    const n = parseInt((t.match(/\b(\d{1,2})\b/) || [])[1] || ({ three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
-    if (n) patch.people = n <= 4 ? '3–4' : n <= 6 ? '5–6' : n <= 8 ? '7–8' : '9+'
+    const n = parseInt((t.replace(/\d+\s*k\b|\d{3,}/g, '').match(/\b(\d{1,2})\b/) || [])[1] || ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(one|two|three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
+    if (/\b(solo|alone|just me|by myself)\b/.test(t)) patch.people = '1'
+    else if (/\b(couple|partner|wife|husband|girlfriend|boyfriend|honeymoon)\b/.test(t)) patch.people = '2'
+    else if (n) patch.people = n === 1 ? '1' : n === 2 ? '2' : n <= 4 ? '3–4' : n <= 6 ? '5–6' : n <= 8 ? '7–8' : '9+'
     if (/beach|sea|chill|goa/.test(t)) patch.exp = 'beach'
     else if (/mountain|hill|trek|snow/.test(t)) patch.exp = 'hills'
     else if (/party|club|night/.test(t)) patch.exp = 'party'
-    else if (/heritage|food|history|old/.test(t)) patch.exp = 'heritage'
     else if (/quiet|calm|peace|nature/.test(t)) patch.exp = 'quiet'
+    else if (/romantic|honeymoon|anniversary|couple|partner/.test(t)) patch.exp = 'romantic'
+    else if (/adventure|raft|camp|bungee|paraglid/.test(t)) patch.exp = 'adventure'
+    const k = (t.match(/(\d{1,2})\s*k\b|(\d{4,6})/) || [])
+    const amt = k[1] ? +k[1] * 1000 : k[2] ? +k[2] : 0
+    if (/budget|under|below|max|within|₹|rs|k\b/.test(t) && amt >= 1000) patch.budget = amt <= 5000 ? 'b1' : amt <= 10000 ? 'b2' : amt <= 20000 ? 'b3' : 'b4'
+    if (/\b(girls?|wom[ae]n|lad(y|ies)|female)\b/.test(t)) patch.gender = 'women'
+    else if (/\b(boys?|guys?|m[ae]n|male)\b/.test(t)) patch.gender = 'men'
+    else if (/\bmixed\b/.test(t)) patch.gender = 'mixed'
     const from = FROM.find((c) => t.includes(c.toLowerCase()) || (c === 'Bengaluru' && t.includes('bangalore')))
     if (from) patch.from = from
     if (/this weekend/.test(t)) patch.when = 'w1'
@@ -28,21 +51,12 @@ export function Start({ ctx }) {
     setB(patch)
     const bits = []
     if (patch.exp) bits.push(EXPERIENCES.find((e) => e.id === patch.exp).label)
-    if (patch.people) bits.push(patch.people + ' people')
+    if (patch.people) bits.push(PARTY[patch.people].label)
     if (patch.from) bits.push('from ' + patch.from)
     if (patch.when) bits.push(WHEN.find((w) => w.id === patch.when).sub)
+    if (patch.budget) bits.push(BUDGET.find((x) => x.id === patch.budget).label + ' each')
+    if (patch.gender) bits.push(GENDER.find((x) => x.id === patch.gender).label.toLowerCase())
     setHeard(bits.length ? 'Got it: ' + bits.join(' · ') + '. I’ve ticked these below. Change anything you like.' : 'I didn’t catch the details. Tap the cards below instead.')
-  }
-
-  const onSubmit = (e) => { e.preventDefault(); if (text.trim()) parse(text) }
-  const mic = () => {
-    setListening(true)
-    setTimeout(() => {
-      setListening(false)
-      const said = 'we are six friends, beaches, from Bangalore, next weekend'
-      setText(said)
-      parse(said)
-    }, 1800)
   }
 
   const begin = () => {
@@ -53,8 +67,11 @@ export function Start({ ctx }) {
     <div className="start">
       <button className="start-close" onClick={() => go('home')} aria-label="Close">✕</button>
       <div className="start-head">
-        <h1>Make my trip</h1>
-        <p className="with">with <span className="myra-word big">myra</span></p>
+        <div className="brand-lockup">
+          <div className="hero-orb behind" aria-hidden="true"><MyraOrb size={260} /></div>
+          <h1 className="start-logo"><img src="brand/mmt-logo.svg" alt="MakeMyTrip" /></h1>
+          <p className="with">with <MyraMark size={40} /></p>
+        </div>
         <p className="start-q">What kind of trip are you in the mood for?</p>
       </div>
 
@@ -65,37 +82,56 @@ export function Start({ ctx }) {
             role="radio"
             aria-checked={b.exp === e.id}
             className={'fan-card' + (b.exp === e.id ? ' on' : '')}
-            style={{ '--r': `${(i - 2) * 4}deg`, '--y': `${Math.abs(i - 2) * 8}px` }}
+            style={{ '--r': TILT[i % TILT.length] + 'deg', '--y': LIFT[i % LIFT.length] + 'px' }}
             onClick={() => setB({ exp: e.id })}
           >
             <Scene kind={e.art} label={e.label} />
-            <span className="fan-label"><b>{e.label}</b><small>{e.sub}</small></span>
+            <span className="fan-label"><b>{e.label}</b></span>
             {b.exp === e.id && <span className="tick">✓</span>}
           </button>
         ))}
       </div>
 
-      <form className="tell" onSubmit={onSubmit}>
-        <MyraOrb size={26} pulse={listening} />
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder={listening ? 'Listening… take your time' : 'Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”'} aria-label="Tell Myra about the trip" />
-        <button type="button" className={'mic' + (listening ? ' on' : '')} onClick={mic} aria-label="Speak instead (optional)">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" fill="none" /></svg>
-        </button>
-        <button type="submit" className="send" aria-label="Send">↑</button>
-      </form>
-      {heard && <p className="heard">{heard}</p>}
-
-      <div className="basics card">
-        <Group label="Who’s coming" hint="A range is fine. Plans change.">
-          {PEOPLE.map((p) => <Chip key={p} on={b.people === p} onClick={() => setB({ people: p })}>{p} people</Chip>)}
-        </Group>
-        <Group label="Starting from">
-          {FROM.map((c) => <Chip key={c} on={b.from === c} onClick={() => setB({ from: c })}>{c}</Chip>)}
-        </Group>
-        <Group label="When">
-          {WHEN.map((w) => <Chip key={w.id} on={b.when === w.id} onClick={() => setB({ when: w.id })}>{w.label}<small>{w.sub}</small></Chip>)}
-        </Group>
+      <div className="basics-bar card" role="group" aria-label="Trip basics">
+        <Field
+          icon={<UsersThree size={16} />} label="Who’s coming" open={open === 'people'} onToggle={() => toggle('people')}
+          big={PARTY[b.people].big} unit={PARTY[b.people].unit} sub={PARTY[b.people].sub}
+          options={PEOPLE.map((p) => ({ id: p, title: PARTY[p].label, sub: PARTY[p].sub }))}
+          value={b.people} onPick={(v) => pick({ people: v })}
+        />
+        <Field
+          icon={<GenderIntersex size={16} />} label="Gender preference" open={open === 'gender'} onToggle={() => toggle('gender')}
+          big={gen.big} sub={gen.sub}
+          options={GENDER.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.gender} onPick={(v) => pick({ gender: v })}
+        />
+        <Field
+          icon={<MapPin size={16} />} label="Starting from" open={open === 'from'} onToggle={() => toggle('from')}
+          big={b.from} sub={CODES[b.from]}
+          options={FROM.map((c) => ({ id: c, title: c, sub: CODES[c] }))}
+          value={b.from} onPick={(v) => pick({ from: v })}
+        />
+        <Field
+          icon={<CalendarBlank size={16} />} label="When" open={open === 'when'} onToggle={() => toggle('when')}
+          big={w.big} unit={w.unit} sub={w.day}
+          options={WHEN.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.when} onPick={(v) => pick({ when: v })}
+        />
+        <Field
+          icon={<Wallet size={16} />} label="Budget" open={open === 'budget'} onToggle={() => toggle('budget')}
+          big={bud.big} unit={bud.max === Infinity && bud.id === 'bf' ? '' : 'each'} sub={bud.sub}
+          options={BUDGET.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.budget} onPick={(v) => pick({ budget: v })}
+        />
       </div>
+
+      <VoiceInput
+        className="tell"
+        placeholder="Or tell Myra, e.g. “6 girls, beaches, from Bangalore, next weekend, under 10k”"
+        sample="we are six friends… beaches, from Bangalore, next weekend"
+        onSubmit={parse}
+      />
+      {heard && <p className="heard">{heard}</p>}
 
       <div className="start-cta">
         <button className="cta big" disabled={!b.exp} onClick={begin}>Plan with Myra</button>
@@ -105,11 +141,34 @@ export function Start({ ctx }) {
   )
 }
 
-function Group({ label, hint, children }) {
+// Loose, hand-placed tilt like photos laid on a table.
+const TILT = [-4, 3, -2, 2.5, -3, 4]
+const LIFT = [4, 0, 3, 1, 2, 5]
+
+const WHEN_BIG = {
+  w1: { big: '20–22', unit: 'Nov’26', day: 'Fri – Sun · This weekend' },
+  w2: { big: '27–29', unit: 'Nov’26', day: 'Fri – Sun · Next weekend' },
+  w3: { big: 'Pick', unit: 'dates', day: 'Choose on a calendar' },
+}
+
+function Field({ icon, label, big, unit, sub, open, onToggle, options, value, onPick }) {
   return (
-    <div className="group">
-      <span className="g-label">{label}{hint && <small> · {hint}</small>}</span>
-      <div className="g-chips">{children}</div>
+    <div className={'bf' + (open ? ' open' : '')}>
+      <button className="bf-btn" aria-haspopup="listbox" aria-expanded={open} onClick={onToggle}>
+        <span className="bf-label">{icon}{label}<CaretDown className="bf-caret" size={13} weight="bold" /></span>
+        <span className="bf-big">{big}{unit && <small> {unit}</small>}</span>
+        <span className="bf-sub">{sub}</span>
+      </button>
+      {open && (
+        <div className="bf-pop" role="listbox" aria-label={label}>
+          {options.map((o) => (
+            <button key={o.id} role="option" aria-selected={value === o.id} className={'bf-opt' + (value === o.id ? ' on' : '')} onClick={() => onPick(o.id)}>
+              <span><b>{o.title}</b>{o.sub && <small>{o.sub}</small>}</span>
+              {value === o.id && <Check size={16} weight="bold" />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -18,12 +18,12 @@ export function FriendView({ ctx }) {
       <div className="done-card card">
         <div className="done-ic">✓</div>
         <h1>Your picks are in, Meera</h1>
-        <p>Aarav will see everyone’s votes and comments and book once it’s settled. Nothing is charged to you now.</p>
+        <p>Anurag will see everyone’s votes and comments and book once it’s settled. Nothing is charged to you now.</p>
         <div className="done-sum">
           <span>🚆 {allTransport.find((t) => t.id === f.votes.transport)?.title}</span>
           <span>🏡 {stays.find((x) => x.id === f.votes.stay)?.name}</span>
         </div>
-        <button className="cta" onClick={() => go('review')}>Switch back to Aarav (host)</button>
+        <button className="cta" onClick={() => go('review')}>Switch back to Anurag (host)</button>
       </div>
     )
   }
@@ -46,7 +46,7 @@ export function FriendView({ ctx }) {
     const by = tally('transport')
     const opts = allTransport.filter((t) => s.shortTransport.includes(t.id))
     title = 'How should we get there?'
-    sub = 'Aarav shortlisted these. Pick one; you can see how others voted.'
+    sub = 'Anurag shortlisted these. Pick one; you can see how others voted.'
     body = (
       <>
         <div className="t-list">
@@ -97,13 +97,13 @@ export function FriendView({ ctx }) {
     const t = allTransport.find((x) => x.id === f.votes.transport)
     const st = stays.find((x) => x.id === f.votes.stay)
     title = 'Send your picks'
-    sub = 'Aarav makes the final call and books for everyone.'
+    sub = 'Anurag makes the final call and books for everyone.'
     back = { label: 'Stay', onClick: () => setF({ stage: 'stay' }) }
     body = (
       <div className="send-sum">
         <div className="sum-row"><span>🚆</span><div><b>{t?.title}</b><small>{t?.dep} → {t?.arr}</small></div><button className="link" onClick={() => setF({ stage: 'transport' })}>Change</button></div>
         <div className="sum-row"><span>🏡</span><div><b>{st?.name}</b><small>{st?.area} · {st?.type}</small></div><button className="link" onClick={() => setF({ stage: 'stay' })}>Change</button></div>
-        <div className="sum-row total"><span>₹</span><div><b>About {inr((t?.price || 0) + stayPerPerson(st, people))} for you</b><small>Travel + stay, if all 6 go. You pay Aarav back later.</small></div></div>
+        <div className="sum-row total"><span>₹</span><div><b>About {inr((t?.price || 0) + stayPerPerson(st, people))} for you</b><small>Travel + stay, if all 6 go. You pay Anurag back later.</small></div></div>
       </div>
     )
     actions = <button className="cta" onClick={() => setF({ sent: true })}>Send my picks</button>
@@ -111,15 +111,15 @@ export function FriendView({ ctx }) {
 
   myra = {
     intro: stage === 'transport'
-      ? 'Hi Meera! Aarav has fixed Goa for 27–29 Nov. Pick how to travel and where to stay. It takes about 2 minutes.'
+      ? 'Hi Meera! Anurag has fixed Goa for 27–29 Nov. Pick how to travel and where to stay. It takes about 2 minutes.'
       : stage === 'stay' ? 'Sana and Riya like the villa’s pool. Kabir and Dev prefer the homestay because it’s cheaper. Your vote could settle it.'
-        : 'Looks good. Once you send, Aarav sees your picks and your comments.',
+        : 'Looks good. Once you send, Anurag sees your picks and your comments.',
     replies: stage === 'stay' ? [
       { label: 'Why the villa?', answer: 'It sleeps 6 in 3 rooms and has a private pool. Split 6 ways it costs ₹4,300 each for 2 nights.' },
       { label: 'Why the homestay?', answer: 'It’s the cheapest whole house (₹3,200 each) and very quiet, but 3.5 km from the beach, so you’d rent scooters.' },
     ] : [
       { label: 'Why the train?', answer: 'It’s the cheapest (₹2,360 return), and you sleep on the way, so there’s no extra hotel night.' },
-      { label: 'What will I pay?', answer: 'Around ₹6,660 for travel and stay if all 6 go with the train and the villa. Aarav pays when booking; you settle with him.' },
+      { label: 'What will I pay?', answer: 'Around ₹6,660 for travel and stay if all 6 go with the train and the villa. Anurag pays when booking; you settle with him.' },
       { label: 'Who has voted?', answer: 'Riya, Kabir, Dev and Sana have voted. You’re the last one.' },
     ],
   }
@@ -127,8 +127,8 @@ export function FriendView({ ctx }) {
   return (
     <Planner ctx={ctx} steps={FRIEND_STEPS} current={idx}
       chips={<TripChips ctx={ctx} locked />}
-      capsule="Goa · 27–29 Nov · Aarav’s trip"
-      banner={<div className="invite"><Avatar who="host" size={30} /> <span><b>Aarav</b> invited you to plan <b>Goa</b> with 5 friends · votes close Wed 25 Nov, 9 pm</span></div>}
+      capsule="Goa · 27–29 Nov · Anurag’s trip"
+      banner={<div className="invite"><Avatar who="host" size={30} /> <span><b>Anurag</b> invited you to plan <b>Goa</b> with 5 friends · votes close Wed 25 Nov, 9 pm</span></div>}
       title={title} sub={sub} back={back} actions={actions} myra={myra}>
       {body}
     </Planner>
