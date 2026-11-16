@@ -10,7 +10,7 @@ import { Header, ConceptNote } from './screens/Chrome.jsx'
 
 const INITIAL = {
   view: 'home',
-  basics: { exp: null, people: '5–6', from: 'Bengaluru', when: 'w2' },
+  basics: { exp: null, people: '5–6', from: 'Bengaluru', when: 'w2', budget: 'b2', gender: 'any' },
   stage: 'city',
   loading: null,
   city: null,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { UsersThree, MapPin, CalendarBlank, CaretDown, Check } from '@phosphor-icons/react'
-import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY, CODES } from '../data.js'
+import { UsersThree, MapPin, CalendarBlank, CaretDown, Check, Wallet, GenderIntersex } from '@phosphor-icons/react'
+import { EXPERIENCES, PEOPLE, FROM, WHEN, PARTY, CODES, BUDGET, GENDER } from '../data.js'
 import { Scene, MyraMark, MyraOrb } from '../art.jsx'
 import { VoiceInput } from './Chrome.jsx'
 
@@ -13,6 +13,8 @@ export function Start({ ctx }) {
   const toggle = (k) => setOpen((o) => (o === k ? null : k))
   const pick = (patch) => { setB(patch); setOpen(null) }
   const w = WHEN_BIG[b.when] || WHEN_BIG.w2
+  const bud = BUDGET.find((x) => x.id === b.budget) || BUDGET[1]
+  const gen = GENDER.find((x) => x.id === b.gender) || GENDER[0]
   useEffect(() => {
     if (!open) return
     const close = (e) => { if (!e.target.closest('.bf')) setOpen(null) }
@@ -26,7 +28,7 @@ export function Start({ ctx }) {
   const parse = (raw) => {
     const t = raw.toLowerCase()
     const patch = {}
-    const n = parseInt((t.match(/\b(\d{1,2})\b/) || [])[1] || ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(one|two|three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
+    const n = parseInt((t.replace(/\d+\s*k\b|\d{3,}/g, '').match(/\b(\d{1,2})\b/) || [])[1] || ({ one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 }[(t.match(/\b(one|two|three|four|five|six|seven|eight)\b/) || [])[1]]) || 0, 10)
     if (/\b(solo|alone|just me|by myself)\b/.test(t)) patch.people = '1'
     else if (/\b(couple|partner|wife|husband|girlfriend|boyfriend|honeymoon)\b/.test(t)) patch.people = '2'
     else if (n) patch.people = n === 1 ? '1' : n === 2 ? '2' : n <= 4 ? '3–4' : n <= 6 ? '5–6' : n <= 8 ? '7–8' : '9+'
@@ -36,6 +38,12 @@ export function Start({ ctx }) {
     else if (/quiet|calm|peace|nature/.test(t)) patch.exp = 'quiet'
     else if (/romantic|honeymoon|anniversary|couple|partner/.test(t)) patch.exp = 'romantic'
     else if (/adventure|raft|camp|bungee|paraglid/.test(t)) patch.exp = 'adventure'
+    const k = (t.match(/(\d{1,2})\s*k\b|(\d{4,6})/) || [])
+    const amt = k[1] ? +k[1] * 1000 : k[2] ? +k[2] : 0
+    if (/budget|under|below|max|within|₹|rs|k\b/.test(t) && amt >= 1000) patch.budget = amt <= 5000 ? 'b1' : amt <= 10000 ? 'b2' : amt <= 20000 ? 'b3' : 'b4'
+    if (/\b(girls?|wom[ae]n|lad(y|ies)|female)\b/.test(t)) patch.gender = 'women'
+    else if (/\b(boys?|guys?|m[ae]n|male)\b/.test(t)) patch.gender = 'men'
+    else if (/\bmixed\b/.test(t)) patch.gender = 'mixed'
     const from = FROM.find((c) => t.includes(c.toLowerCase()) || (c === 'Bengaluru' && t.includes('bangalore')))
     if (from) patch.from = from
     if (/this weekend/.test(t)) patch.when = 'w1'
@@ -46,6 +54,8 @@ export function Start({ ctx }) {
     if (patch.people) bits.push(PARTY[patch.people].label)
     if (patch.from) bits.push('from ' + patch.from)
     if (patch.when) bits.push(WHEN.find((w) => w.id === patch.when).sub)
+    if (patch.budget) bits.push(BUDGET.find((x) => x.id === patch.budget).label + ' each')
+    if (patch.gender) bits.push(GENDER.find((x) => x.id === patch.gender).label.toLowerCase())
     setHeard(bits.length ? 'Got it: ' + bits.join(' · ') + '. I’ve ticked these below. Change anything you like.' : 'I didn’t catch the details. Tap the cards below instead.')
   }
 
@@ -90,6 +100,12 @@ export function Start({ ctx }) {
           value={b.people} onPick={(v) => pick({ people: v })}
         />
         <Field
+          icon={<GenderIntersex size={16} />} label="Gender preference" open={open === 'gender'} onToggle={() => toggle('gender')}
+          big={gen.big} sub={gen.sub}
+          options={GENDER.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.gender} onPick={(v) => pick({ gender: v })}
+        />
+        <Field
           icon={<MapPin size={16} />} label="Starting from" open={open === 'from'} onToggle={() => toggle('from')}
           big={b.from} sub={CODES[b.from]}
           options={FROM.map((c) => ({ id: c, title: c, sub: CODES[c] }))}
@@ -101,11 +117,17 @@ export function Start({ ctx }) {
           options={WHEN.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
           value={b.when} onPick={(v) => pick({ when: v })}
         />
+        <Field
+          icon={<Wallet size={16} />} label="Budget" open={open === 'budget'} onToggle={() => toggle('budget')}
+          big={bud.big} unit={bud.max === Infinity && bud.id === 'bf' ? '' : 'each'} sub={bud.sub}
+          options={BUDGET.map((x) => ({ id: x.id, title: x.label, sub: x.sub }))}
+          value={b.budget} onPick={(v) => pick({ budget: v })}
+        />
       </div>
 
       <VoiceInput
         className="tell"
-        placeholder="Or tell Myra, e.g. “we’re 6, beaches, from Bangalore, next weekend”"
+        placeholder="Or tell Myra, e.g. “6 girls, beaches, from Bangalore, next weekend, under 10k”"
         sample="we are six friends… beaches, from Bangalore, next weekend"
         onSubmit={parse}
       />

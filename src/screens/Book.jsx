@@ -49,7 +49,7 @@ export function Approve({ ctx }) {
           <span className="i-ic img"><Scene kind={b.S.art} label={b.S.name} /></span>
           <div className="i-main">
             <b>{b.S.name}, {b.S.area}</b>
-            <small>{stayType(b.S, ctx.mode)} · Fri 27 – Sun 29 Nov · 2 nights</small>
+            <small>{stayType(b.S, ctx.mode, ctx.s.basics.gender)} · Fri 27 – Sun 29 Nov · 2 nights</small>
             <small className="ok">Free cancellation till 24 Nov</small>
           </div>
           <span className="i-amt">{inr(b.stay)}</span>

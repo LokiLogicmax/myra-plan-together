@@ -1,5 +1,5 @@
-import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, STAY_WHY, NIGHT_LABELS, inr, stayPerPerson, stayType, stayAvail } from '../data.js'
-import { Compass, MapPin, CalendarBlank, UsersThree, MapTrifold, Train, Bed, CaretDown, Lock } from '@phosphor-icons/react'
+import { CITIES, EXPERIENCES, WHEN, PARTY, CODES, BUDGET, GENDER, STAY_WHY, NIGHT_LABELS, inr, stayPerPerson, stayType, stayAvail } from '../data.js'
+import { Compass, MapPin, CalendarBlank, UsersThree, MapTrifold, Train, Bed, CaretDown, Lock, Wallet } from '@phosphor-icons/react'
 import { Scene, ModeIcon } from '../art.jsx'
 import { Planner } from './Chrome.jsx'
 import { CityGuide } from './CityGuide.jsx'
@@ -7,7 +7,7 @@ import { CityGuide } from './CityGuide.jsx'
 export const liveTime = () => new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })
 
 const ICON = {
-  Trip: <Compass size={15} />, From: <MapPin size={15} />, When: <CalendarBlank size={15} />, Who: <UsersThree size={15} />,
+  Trip: <Compass size={15} />, From: <MapPin size={15} />, When: <CalendarBlank size={15} />, Who: <UsersThree size={15} />, Budget: <Wallet size={15} />,
   City: <MapTrifold size={15} />, Transport: <Train size={15} />, Stay: <Bed size={15} />,
 }
 
@@ -21,11 +21,14 @@ export function TripChips({ ctx, locked = false, onEdit, stage }) {
   const exp = EXPERIENCES.find((e) => e.id === b.exp)
   const when = WHEN.find((w) => w.id === b.when)
   const party = PARTY[b.people]
+  const bud = BUDGET.find((x) => x.id === b.budget)
+  const gen = GENDER.find((x) => x.id === b.gender)
   const items = [
     ['Trip', exp?.label, exp?.sub, 'start', true],
     ['From', b.from, CODES[b.from], 'start'],
     ['When', when?.sub.replace(/^(\w+) (\d+) – (\w+) (\d+) (\w+)$/, '$2–$4 $5'), when ? '2 nights' : '', 'start'],
-    ['Who', s.dropout === 'accepted' ? '5 people' : party?.label, party?.sub, 'start'],
+    ['Who', s.dropout === 'accepted' ? '5 people' : party?.label, (gen && gen.id !== 'any' ? gen.label : party?.sub), 'start'],
+    ['Budget', bud?.id === 'bf' ? 'Flexible' : bud?.big + ' each', 'Travel + stay', 'start'],
     ['City', city?.name, city?.tag, 'city', true],
   ]
   if (!locked && past('transport') && s.shortTransport.length) items.push(['Transport', ctx.group ? `${s.shortTransport.length} in the vote` : 'Chosen', ctx.group ? 'Shortlisted' : '', 'transport'])
@@ -73,6 +76,9 @@ export function HostPlan({ ctx }) {
   )
 }
 
+const budgetText = (b) => { const x = BUDGET.find((y) => y.id === b.budget); return x && x.id !== 'bf' ? ', ' + x.label + ' each' : '' }
+const genderText = (b) => (b.gender === 'women' ? ', women only' : b.gender === 'men' ? ', men only' : b.gender === 'mixed' ? ', mixed group with separate rooms' : '')
+
 /* ---------- City ---------- */
 function CityStage(ctx, toStage) {
   const { s, set, group, people } = ctx
@@ -107,7 +113,7 @@ function CityStage(ctx, toStage) {
     myra: {
       intro: s.loading
         ? 'Looking at the season, the weather and travel time from ' + s.basics.from + '…'
-        : `Here’s what I understood: ${exp?.label}, ${group ? PARTY[s.basics.people]?.label + ' (I’ll plan for 6)' : people === 1 ? 'just you' : 'two of you'}, from ${s.basics.from}, ${when?.sub}. Is that right?`,
+        : `Here’s what I understood: ${exp?.label}, ${group ? PARTY[s.basics.people]?.label + ' (I’ll plan for 6)' : people === 1 ? 'just you' : 'two of you'}, from ${s.basics.from}, ${when?.sub}${budgetText(s.basics)}${genderText(s.basics)}. Is that right?`,
       replies: s.loading ? [] : [
         { label: 'Yes, that’s right', answer: group ? 'Great. Pick a city on the left. Once you fix it, friends can’t change it, so the plan doesn’t go round in circles.' : 'Great. Pick a city on the left, and I’ll check seats and stays for ' + (people === 1 ? 'you.' : 'two.') },
         { label: 'Why is Goa your pick?', answer: CITIES[0].why },
@@ -204,6 +210,11 @@ function StayStage(ctx, toStage) {
   const open = stays.filter((x) => avail[x.id].ok)
   const closed = stays.filter((x) => !avail[x.id].ok)
   const forWho = group ? people + ' people' : people === 1 ? 'one' : 'two'
+  const bud = BUDGET.find((b) => b.id === s.basics.budget)
+  const picked = ctx.allTransport.filter((t) => s.shortTransport.includes(t.id))
+  const tPrice = Math.min(...(picked.length ? picked : ctx.allTransport).map((t) => t.price))
+  const over = (x) => bud && bud.max !== Infinity && tPrice + stayPerPerson(x, people) > bud.max
+  const fits = open.filter((x) => !over(x)).length
   const card = (x) => {
     const on = s.shortStay.includes(x.id)
     const a = avail[x.id]
@@ -213,11 +224,12 @@ function StayStage(ctx, toStage) {
           <div className="img"><Scene kind={x.art} label={x.name} />{x.id === stayPick && <span className="pick">★ Myra’s pick</span>}</div>
           <div className="sc-body">
             <b>{x.name}</b>
-            <span className="area">{x.area} · {stayType(x, mode)}</span>
+            <span className="area">{x.area} · {stayType(x, mode, s.basics.gender)}</span>
             <span className="rating-sm"><span className="score">{x.rating}</span> {x.reviews.toLocaleString('en-IN')} ratings</span>
             <span className="loc">{x.beach}</span>
             <Avail a={a} />
             {a.ok && <span className="sc-price"><b>{inr(stayPerPerson(x, people))}</b> <small>per person</small></span>}
+            {a.ok && over(x) && <span className="over-budget">Over your {bud.big} budget with travel</span>}
           </div>
         </button>
         {a.ok && <button className={'box' + (on ? ' on' : '')} onClick={() => toggle(x.id)} aria-pressed={on} aria-label={group ? (on ? 'Remove ' : 'Add ') + x.name + ' to the vote' : (on ? 'Unchoose ' : 'Choose ') + x.name}>{on ? '✓' : '+'}</button>}
@@ -229,7 +241,7 @@ function StayStage(ctx, toStage) {
     const on = s.shortStay.includes(detail.id)
     return {
       title: detail.name,
-      sub: `${stayType(detail, mode)} · ${detail.area}, Goa · 27–29 Nov, 2 nights`,
+      sub: `${stayType(detail, mode, s.basics.gender)} · ${detail.area}, Goa · 27–29 Nov, 2 nights`,
       back: { label: 'Stay', onClick: () => set({ detail: null, thread: [] }) },
       body: (
         <div className="detail">
@@ -272,7 +284,7 @@ function StayStage(ctx, toStage) {
 
   return {
     title: 'Where do you stay?',
-    sub: `${stays.length} stays checked for Fri 27 – Sun 29 Nov · ${open.length} free for ${forWho}. Prices are per person for 2 nights. ` + (group ? 'Shortlist up to 3 for the vote.' : 'Choose one.'),
+    sub: `${stays.length} stays checked for Fri 27 – Sun 29 Nov · ${open.length} free for ${forWho}` + (bud && bud.max !== Infinity ? `, ${fits} within your ${bud.big} budget` : '') + `. Prices are per person for 2 nights. ` + (group ? 'Shortlist up to 3 for the vote.' : 'Choose one.'),
     back: { label: 'Transport', onClick: () => toStage('transport') },
     body: s.loading ? <Skeletons n={4} /> : (
       <>

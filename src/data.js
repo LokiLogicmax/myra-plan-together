@@ -36,6 +36,22 @@ export const FROM = ['Bengaluru', 'Mumbai', 'Delhi', 'Hyderabad']
 // Airport and station codes for each starting city.
 export const CODES = { Bengaluru: 'BLR airport · SBC station', Mumbai: 'BOM airport · CSMT station', Delhi: 'DEL airport · NDLS station', Hyderabad: 'HYD airport · SC station' }
 
+// Budget per person for the whole trip (travel + stay).
+export const BUDGET = [
+  { id: 'b1', label: 'Under ₹5,000', big: '<₹5k', max: 5000, sub: 'Hostels, buses, beach shacks' },
+  { id: 'b2', label: '₹5,000 – ₹10,000', big: '₹5–10k', max: 10000, sub: 'Trains, shared villas' },
+  { id: 'b3', label: '₹10,000 – ₹20,000', big: '₹10–20k', max: 20000, sub: 'Flights, resorts' },
+  { id: 'b4', label: '₹20,000+', big: '₹20k+', max: Infinity, sub: 'Boutique stays' },
+  { id: 'bf', label: 'Flexible', big: 'Flexible', max: Infinity, sub: 'Show me everything' },
+]
+// Who the stay and rooms should suit.
+export const GENDER = [
+  { id: 'any', label: 'No preference', big: 'Any', sub: 'Any stay, any room' },
+  { id: 'women', label: 'Women only', big: 'Women', sub: 'Women-friendly stays, female dorms' },
+  { id: 'men', label: 'Men only', big: 'Men', sub: 'Men-only dorms where offered' },
+  { id: 'mixed', label: 'Mixed group', big: 'Mixed', sub: 'Separate rooms for men and women' },
+]
+
 export const WHEN = [
   { id: 'w1', label: 'This weekend', sub: 'Fri 20 – Sun 22 Nov' },
   { id: 'w2', label: 'Next weekend', sub: 'Fri 27 – Sun 29 Nov' },
@@ -204,7 +220,11 @@ export function stayAvail(x, people) {
 }
 
 // Room description for who's going.
-export const stayType = (x, mode) => (mode !== 'group' && x[mode]) || x.type
+export const stayType = (x, mode, gender) => {
+  if (x.id === 's2' && mode !== 'group' && gender === 'women') return mode === 'solo' ? 'Bed in a female-only dorm' : '2 beds in a female-only dorm'
+  if (x.id === 's2' && mode !== 'group' && gender === 'men') return mode === 'solo' ? 'Bed in a male-only dorm' : '2 beds in a male-only dorm'
+  return (mode !== 'group' && x[mode]) || x.type
+}
 
 export const NIGHTS = 2
 
